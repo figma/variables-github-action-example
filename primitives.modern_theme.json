@@ -1,0 +1,136 @@
+{
+  "spacing": {
+    "1": {
+      "$type": "number",
+      "$value": 8
+    },
+    "2": {
+      "$type": "number",
+      "$value": 16
+    },
+    "3": {
+      "$type": "number",
+      "$value": 24
+    },
+    "4": {
+      "$type": "number",
+      "$value": 32
+    },
+    "5": {
+      "$type": "number",
+      "$value": 40
+    },
+    "6": {
+      "$type": "number",
+      "$value": 48
+    },
+    "7": {
+      "$type": "number",
+      "$value": 56
+    },
+    "8": {
+      "$type": "number",
+      "$value": 64
+    },
+    "9": {
+      "$type": "number",
+      "$value": 72
+    },
+    "10": {
+      "$type": "number",
+      "$value": 80
+    },
+    "11": {
+      "$type": "number",
+      "$value": 88
+    },
+    "12": {
+      "$type": "number",
+      "$value": 96
+    },
+    "13": {
+      "$type": "number",
+      "$value": 104
+    },
+    "half": {
+      "$type": "number",
+      "$value": 4
+    }
+  },
+  "radius": {
+    "3xl": {
+      "$type": "number",
+      "$value": 360
+    },
+    "2xl": {
+      "$type": "number",
+      "$value": 128
+    },
+    "lg": {
+      "$type": "number",
+      "$value": 16
+    },
+    "xl": {
+      "$type": "number",
+      "$value": 32
+    },
+    "md": {
+      "$type": "number",
+      "$value": 8
+    },
+    "sm": {
+      "$type": "number",
+      "$value": 4
+    }
+  },
+  "color": {
+    "brand": {
+      "radish": {
+        "$type": "color",
+        "$value": "#ffcbb7"
+      },
+      "pear": {
+        "$type": "color",
+        "$value": "#def358"
+      },
+      "watermelon": {
+        "$type": "color",
+        "$value": "#7db8a9"
+      },
+      "mushroom": {
+        "$type": "color",
+        "$value": "#f1d367"
+      },
+      "cherry": {
+        "$type": "color",
+        "$value": "#ff9eab"
+      }
+    },
+    "gray": {
+      "50": {
+        "$type": "color",
+        "$value": "#f1f1f1"
+      },
+      "200": {
+        "$type": "color",
+        "$value": "#d3d3d3"
+      },
+      "400": {
+        "$type": "color",
+        "$value": "#afafaf"
+      },
+      "600": {
+        "$type": "color",
+        "$value": "#7c7c7c"
+      },
+      "800": {
+        "$type": "color",
+        "$value": "#343434"
+      },
+      "900": {
+        "$type": "color",
+        "$value": "#202020"
+      }
+    }
+  }
+}
