@@ -1,0 +1,22 @@
+name: Test Action
+on: 
+  workflow_dispatch:
+    inputs:
+      file_key:
+        description: 'The file key of the Figma file to be updated'
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.0'
+
+      - name: Set NPM version
+        run: npm install -g npm@9.5.1
+        
+      - name: Clone repo
+        uses: actions/checkout@v3
