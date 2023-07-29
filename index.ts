@@ -1,18 +1,12 @@
-require('dotenv').config()
-const axios = require('axios')
-const fs = require('fs')
-const path = require('path')
+import 'dotenv/config'
+import axios from 'axios'
+import * as fs from 'fs'
+import * as path from 'path'
 
 interface Token {
   $type: 'color' | 'number' | 'string' | 'boolean'
   $value: string | number | boolean
 }
-
-// type TokensFile = {
-//   [tokenGroup: string]: {
-//     [tokenName: string]: Token
-//   }
-// }
 
 type TokenOrTokenGroup =
   | Token
@@ -24,8 +18,48 @@ type TokensFile = {
   [key: string]: TokenOrTokenGroup
 }
 
-interface VariableCollectionInternal {
+interface VariableMode {
+  id: string
   name: string
+}
+
+interface VariableCollection {
+  id: string
+  name: string
+  modes: VariableMode[]
+  defaultModeId: string
+  remote: boolean
+}
+
+interface Color {
+  r: number
+  g: number
+  b: number
+  a: number
+}
+
+interface VariableAlias {
+  type: 'VARIABLE_ALIAS'
+  id: string
+}
+
+interface Variable {
+  id: string
+  name: string
+  key: string
+  variableCollectionId: string
+  resolvedType: 'BOOLEAN' | 'FLOAT' | 'STRING' | 'COLOR'
+  valuesByMode: { [modeId: string]: boolean | number | string | Color | VariableAlias }
+  remote: boolean
+}
+
+interface ApiGetLocalVariablesResponse {
+  status: number
+  error: boolean
+  meta: {
+    variableCollections: { [id: string]: VariableCollection }
+    variables: { [id: string]: Variable }
+  }
 }
 
 class FigmaApi {
@@ -37,7 +71,7 @@ class FigmaApi {
   }
 
   async getLocalVariables(fileKey: string) {
-    const resp = await axios.request({
+    const resp = await axios.request<ApiGetLocalVariablesResponse>({
       url: `${this.baseUrl}/v1/files/${fileKey}/variables/local`,
       headers: {
         Accept: '*/*',
@@ -71,7 +105,7 @@ function readJsonFiles(files: string[]) {
   const tokensJsonByFile: { [fileName: string]: TokensFile } = {}
 
   files.forEach((file) => {
-    const fileContent = fs.readFileSync(file)
+    const fileContent = fs.readFileSync(file, { encoding: 'utf-8' })
     tokensJsonByFile[file] = JSON.parse(fileContent)
   })
 

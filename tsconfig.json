@@ -9,6 +9,8 @@
     "noUnusedLocals": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "noUnusedParameters": true,
     "noEmitOnError": true,
     "removeComments": true,
