@@ -1,4 +1,4 @@
-name: Test Action
+name: Sync tokens to Figma
 on:
   workflow_dispatch:
     inputs:
@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Sync variables to Figma file
+      - name: Sync tokens to Figma file
         run: npm run start
         env:
           FILE_KEY: ${{ github.event.inputs.file_key }}
