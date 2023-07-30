@@ -78,7 +78,7 @@
     },
     "radius-minimal": {
       "$type": "number",
-      "$value": "{value.1}"
+      "$value": "{radius.sm}"
     },
     "radius-full": {
       "$type": "number",

@@ -2,7 +2,16 @@ import 'dotenv/config'
 import * as fs from 'fs'
 import * as path from 'path'
 
-import FigmaApi, { VariableCollection, Variable, ApiPostVariablesPayload } from './figma_api.js'
+import FigmaApi, {
+  VariableCollection,
+  Variable,
+  ApiPostVariablesPayload,
+  VariableValue,
+  Color,
+} from './figma_api.js'
+
+import { parseColor } from './color.js'
+import { green } from './utils.js'
 
 interface Token {
   $type: 'color' | 'number' | 'string' | 'boolean'
@@ -79,6 +88,76 @@ function traverseCollection({
   }
 }
 
+function isAlias(value: string) {
+  return value.toString().trim().charAt(0) === '{'
+}
+
+function variableValueFromToken(
+  token: Token,
+  localVariablesByCollectionAndName: {
+    [variableCollectionId: string]: { [variableName: string]: Variable }
+  },
+): VariableValue {
+  if (typeof token.$value === 'string' && isAlias(token.$value)) {
+    const value = token.$value
+      .trim()
+      .replace(/\./g, '/')
+      .replace(/[\{\}]/g, '')
+
+    for (const localVariablesByName of Object.values(localVariablesByCollectionAndName)) {
+      if (localVariablesByName[value]) {
+        return {
+          type: 'VARIABLE_ALIAS',
+          id: localVariablesByName[value].id,
+        }
+      }
+    }
+
+    return {
+      type: 'VARIABLE_ALIAS',
+      id: value,
+    }
+  } else if (typeof token.$value === 'string' && token.$type === 'color') {
+    const color = parseColor(token.$value)
+    color.r = Math.round(color.r * 1000) / 1000
+    color.g = Math.round(color.g * 1000) / 1000
+    color.b = Math.round(color.b * 1000) / 1000
+    return color
+  } else {
+    return token.$value
+  }
+}
+
+/**
+ * Compares two colors for approximate equality since converting between Figma RGBA objects (from 0 -> 1) and
+ * hex colors can result in slight differences.
+ */
+function colorApproximatelyEqual(colorA: Color, colorB: Color) {
+  const EPSILON = 0.002
+
+  return (
+    Math.abs(colorA.r - colorB.r) < EPSILON &&
+    Math.abs(colorA.g - colorB.g) < EPSILON &&
+    Math.abs(colorA.b - colorB.b) < EPSILON &&
+    Math.abs((colorA.a === undefined ? 1 : colorA.a) - (colorB.a === undefined ? 1 : colorB.a)) <
+      EPSILON
+  )
+}
+
+function compareVariableValues(a: VariableValue, b: VariableValue) {
+  if (typeof a === 'object' && typeof b === 'object') {
+    if ('type' in a && 'type' in b && a.type === 'VARIABLE_ALIAS' && b.type === 'VARIABLE_ALIAS') {
+      return a.id === b.id
+    } else if ('r' in a && 'r' in b) {
+      return colorApproximatelyEqual(a, b)
+    }
+  } else {
+    return a === b
+  }
+
+  return false
+}
+
 async function main() {
   if (!process.env.ACCESS_TOKEN || !process.env.FILE_KEY) {
     throw new Error('ACCESS_TOKEN environemnt variable is required')
@@ -90,11 +169,10 @@ async function main() {
 
   const tokensByFile = readJsonFiles(tokensFiles)
 
-  console.log(tokensByFile)
+  console.log('Read tokens files:', Object.keys(tokensByFile))
 
   const api = new FigmaApi(process.env.ACCESS_TOKEN)
   const localVariables = await api.getLocalVariables(fileKey)
-  console.log('localVariables', localVariables)
 
   const localVariableCollectionsByName: { [name: string]: VariableCollection } = {}
   const localVariablesByCollectionAndName: {
@@ -127,7 +205,10 @@ async function main() {
     localVariablesByCollectionAndName[variable.variableCollectionId][variable.name] = variable
   })
 
-  console.log('localVariableCollectionsByName', localVariableCollectionsByName)
+  console.log(
+    'Local variable collections in Figma file:',
+    Object.keys(localVariableCollectionsByName),
+  )
 
   const postVariablesPayload: ApiPostVariablesPayload = {
     variableCollections: [],
@@ -138,7 +219,6 @@ async function main() {
 
   Object.entries(tokensByFile).forEach(([fileName, tokens]) => {
     const { collectionName, modeName } = collectionAndModeFromFileName(path.basename(fileName))
-    console.log(collectionName, modeName)
 
     const variableCollection = localVariableCollectionsByName[collectionName]
     const variableCollectionId = variableCollection ? variableCollection.id : collectionName
@@ -179,32 +259,48 @@ async function main() {
         })
       }
 
-      postVariablesPayload.variableModeValues!.push({
-        variableId,
-        modeId,
-        value: token.$value,
-      })
+      const existingVariableValue = variable && variableMode ? variable.valuesByMode[modeId] : null
+      const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
+
+      if (
+        existingVariableValue === null ||
+        !compareVariableValues(existingVariableValue, newVariableValue)
+      ) {
+        postVariablesPayload.variableModeValues!.push({
+          variableId,
+          modeId,
+          value: newVariableValue,
+        })
+      }
     })
   })
 
-  console.log('postVariablesPayload.variableCollections', postVariablesPayload.variableCollections)
-  console.log('postVariablesPayload.variableModes', postVariablesPayload.variableModes)
-  console.log('postVariablesPayload.variables', postVariablesPayload.variables)
-  console.log('postVariablesPayload.variableModeValues', postVariablesPayload.variableModeValues)
+  if (Object.values(postVariablesPayload).every((value) => value.length === 0)) {
+    console.log(green('✅ Tokens are already up to date with the Figma file'))
+    return
+  }
 
-  // const start = Date.now()
-  // const apiResp = await axios.request({
-  //   url: `${baseUrl}/v1/files/${fileKey}/variables`,
-  //   method: 'POST',
-  //   headers: {
-  //     Accept: '*/*',
-  //     'X-Figma-Token': token,
-  //   },
-  //   data: payload,
-  // })
+  const apiResp = await api.postVariables(fileKey, postVariablesPayload)
 
-  // console.log(apiResp.data)
-  // console.log('elapsed time:', Date.now() - start)
+  console.log('POST variables API response:', apiResp)
+
+  if (postVariablesPayload.variableCollections && postVariablesPayload.variableCollections.length) {
+    console.log('Updated variable collections', postVariablesPayload.variableCollections)
+  }
+
+  if (postVariablesPayload.variableModes && postVariablesPayload.variableModes.length) {
+    console.log('Updated variable modes', postVariablesPayload.variableModes)
+  }
+
+  if (postVariablesPayload.variables && postVariablesPayload.variables.length) {
+    console.log('Updated variables', postVariablesPayload.variables)
+  }
+
+  if (postVariablesPayload.variableModeValues && postVariablesPayload.variableModeValues.length) {
+    console.log('Updated variable mode values', postVariablesPayload.variableModeValues)
+  }
+
+  console.log(green('✅ Figma file has been updated with the new tokens'))
 }
 
 main()

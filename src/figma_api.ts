@@ -25,11 +25,11 @@ export interface VariableCollectionChange extends Partial<Pick<VariableCollectio
   initialModeId?: string
 }
 
-interface Color {
+export interface Color {
   r: number
   g: number
   b: number
-  a: number
+  a?: number
 }
 
 interface VariableAlias {
@@ -37,13 +37,15 @@ interface VariableAlias {
   id: string
 }
 
+export type VariableValue = boolean | number | string | Color | VariableAlias
+
 export interface Variable {
   id: string
   name: string
   key: string
   variableCollectionId: string
   resolvedType: 'BOOLEAN' | 'FLOAT' | 'STRING' | 'COLOR'
-  valuesByMode: { [modeId: string]: boolean | number | string | Color | VariableAlias }
+  valuesByMode: { [modeId: string]: VariableValue }
   remote: boolean
 }
 
@@ -55,7 +57,7 @@ export interface VariableChange
 export interface VariableModeValue {
   variableId: string
   modeId: string
-  value: boolean | number | string | Color | VariableAlias
+  value: VariableValue
 }
 
 interface ApiGetLocalVariablesResponse {
@@ -72,6 +74,12 @@ export interface ApiPostVariablesPayload {
   variableModes?: VariableModeChange[]
   variables?: VariableChange[]
   variableModeValues?: VariableModeValue[]
+}
+
+interface ApiPostVariablesResponse {
+  status: number
+  error: boolean
+  meta: { tempIdToRealId: { [tempId: string]: string } }
 }
 
 export default class FigmaApi {
@@ -95,7 +103,7 @@ export default class FigmaApi {
   }
 
   async postVariables(fileKey: string, payload: ApiPostVariablesPayload) {
-    const resp = await axios.request({
+    const resp = await axios.request<ApiPostVariablesResponse>({
       url: `${this.baseUrl}/v1/files/${fileKey}/variables`,
       method: 'POST',
       headers: {
