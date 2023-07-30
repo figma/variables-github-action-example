@@ -1,5 +1,21 @@
 import { Color } from './figma_api.js'
 
+/**
+ * Compares two colors for approximate equality since converting between Figma RGBA objects (from 0 -> 1) and
+ * hex colors can result in slight differences.
+ */
+export function colorApproximatelyEqual(colorA: Color, colorB: Color) {
+  const EPSILON = 0.002
+
+  return (
+    Math.abs(colorA.r - colorB.r) < EPSILON &&
+    Math.abs(colorA.g - colorB.g) < EPSILON &&
+    Math.abs(colorA.b - colorB.b) < EPSILON &&
+    Math.abs((colorA.a === undefined ? 1 : colorA.a) - (colorB.a === undefined ? 1 : colorB.a)) <
+      EPSILON
+  )
+}
+
 export function parseColor(color: string): Color {
   color = color.trim()
   const rgbRegex = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/

@@ -7,7 +7,7 @@ on:
         required: true
 
 jobs:
-  test:
+  sync-tokens-to-figma:
     runs-on: ubuntu-latest
     steps:
       - name: Install Node.js
