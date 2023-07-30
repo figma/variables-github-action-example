@@ -84,6 +84,19 @@ function collectionAndModeFromFileName(fileName: string) {
   return { collectionName, modeName }
 }
 
+function variableResolvedTypeFromToken(token: Token) {
+  switch (token.$type) {
+    case 'color':
+      return 'COLOR'
+    case 'number':
+      return 'FLOAT'
+    case 'string':
+      return 'STRING'
+    case 'boolean':
+      return 'BOOLEAN'
+  }
+}
+
 function isAlias(value: string) {
   return value.toString().trim().charAt(0) === '{'
 }
@@ -201,16 +214,31 @@ export async function generatePostVariablesPayload(
     const variableMode = variableCollection?.modes.find((mode) => mode.name === modeName)
     const modeId = variableMode ? variableMode.modeId : modeName
 
-    if (!variableCollection) {
+    if (
+      !variableCollection &&
+      !postVariablesPayload.variableCollections!.find((c) => c.id === variableCollectionId)
+    ) {
       postVariablesPayload.variableCollections!.push({
         action: 'CREATE',
         id: variableCollectionId,
         name: variableCollectionId,
         initialModeId: modeId,
       })
+
+      postVariablesPayload.variableModes!.push({
+        action: 'UPDATE',
+        id: modeId,
+        name: modeId,
+        variableCollectionId,
+      })
     }
 
-    if (!variableMode) {
+    if (
+      !variableMode &&
+      !postVariablesPayload.variableCollections!.find(
+        (c) => c.id === variableCollectionId && c.initialModeId === modeId,
+      )
+    ) {
       postVariablesPayload.variableModes!.push({
         action: 'CREATE',
         id: modeId,
@@ -225,13 +253,18 @@ export async function generatePostVariablesPayload(
       const variable = localVariablesByName[tokenName]
       const variableId = variable ? variable.id : tokenName
 
-      if (!variable) {
+      if (
+        !variable &&
+        !postVariablesPayload.variables!.find(
+          (v) => v.id === variableId && v.variableCollectionId === variableCollectionId,
+        )
+      ) {
         postVariablesPayload.variables!.push({
           action: 'CREATE',
           id: variableId,
           name: tokenName,
           variableCollectionId,
-          resolvedType: token.$type.toUpperCase() as any,
+          resolvedType: variableResolvedTypeFromToken(token),
         })
       }
 

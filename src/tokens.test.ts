@@ -129,7 +129,6 @@ describe('generatePostVariablesPayload', () => {
     }
 
     const result = await generatePostVariablesPayload(tokensByFile, 'access_token', 'file_key')
-    console.log(result.variableCollections)
     expect(result.variableCollections).toEqual([
       {
         action: 'CREATE',
@@ -142,6 +141,135 @@ describe('generatePostVariablesPayload', () => {
         id: 'tokens',
         name: 'tokens',
         initialModeId: 'mode1',
+      },
+    ])
+
+    expect(result.variableModes).toEqual([
+      {
+        action: 'UPDATE',
+        id: 'mode1',
+        name: 'mode1',
+        variableCollectionId: 'primitives',
+      },
+      {
+        action: 'CREATE',
+        id: 'mode2',
+        name: 'mode2',
+        variableCollectionId: 'primitives',
+      },
+      {
+        action: 'UPDATE',
+        id: 'mode1',
+        name: 'mode1',
+        variableCollectionId: 'tokens',
+      },
+      {
+        action: 'CREATE',
+        id: 'mode2',
+        name: 'mode2',
+        variableCollectionId: 'tokens',
+      },
+    ])
+
+    expect(result.variables).toEqual([
+      // variables for the primitives collection
+      {
+        action: 'CREATE',
+        id: 'spacing/1',
+        name: 'spacing/1',
+        variableCollectionId: 'primitives',
+        resolvedType: 'FLOAT',
+      },
+      {
+        action: 'CREATE',
+        id: 'spacing/2',
+        name: 'spacing/2',
+        variableCollectionId: 'primitives',
+        resolvedType: 'FLOAT',
+      },
+      {
+        action: 'CREATE',
+        id: 'color/brand/radish',
+        name: 'color/brand/radish',
+        variableCollectionId: 'primitives',
+        resolvedType: 'COLOR',
+      },
+      {
+        action: 'CREATE',
+        id: 'color/brand/pear',
+        name: 'color/brand/pear',
+        variableCollectionId: 'primitives',
+        resolvedType: 'COLOR',
+      },
+
+      // variables for the tokens collection
+      {
+        action: 'CREATE',
+        id: 'spacing/spacing-sm',
+        name: 'spacing/spacing-sm',
+        variableCollectionId: 'tokens',
+        resolvedType: 'FLOAT',
+      },
+      {
+        action: 'CREATE',
+        id: 'surface/surface-brand',
+        name: 'surface/surface-brand',
+        variableCollectionId: 'tokens',
+        resolvedType: 'COLOR',
+      },
+    ])
+
+    expect(result.variableModeValues).toEqual([
+      // primitives, mode1
+      { variableId: 'spacing/1', modeId: 'mode1', value: 8 },
+      { variableId: 'spacing/2', modeId: 'mode1', value: 16 },
+      {
+        variableId: 'color/brand/radish',
+        modeId: 'mode1',
+        value: { r: 1, g: 0.745, b: 0.086 },
+      },
+      {
+        variableId: 'color/brand/pear',
+        modeId: 'mode1',
+        value: { r: 1, g: 0.745, b: 0.086 },
+      },
+
+      // primitives, mode2
+      { variableId: 'spacing/1', modeId: 'mode2', value: 8 },
+      { variableId: 'spacing/2', modeId: 'mode2', value: 16 },
+      {
+        variableId: 'color/brand/radish',
+        modeId: 'mode2',
+        value: { r: 0.004, g: 0.004, b: 0.004 },
+      },
+      {
+        variableId: 'color/brand/pear',
+        modeId: 'mode2',
+        value: { r: 0.004, g: 0.004, b: 0.004 },
+      },
+
+      // tokens, mode1
+      {
+        variableId: 'spacing/spacing-sm',
+        modeId: 'mode1',
+        value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
+      },
+      {
+        variableId: 'surface/surface-brand',
+        modeId: 'mode1',
+        value: { type: 'VARIABLE_ALIAS', id: 'color/brand/radish' },
+      },
+
+      // tokens, mode2
+      {
+        variableId: 'spacing/spacing-sm',
+        modeId: 'mode2',
+        value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
+      },
+      {
+        variableId: 'surface/surface-brand',
+        modeId: 'mode2',
+        value: { type: 'VARIABLE_ALIAS', id: 'color/brand/pear' },
       },
     ])
   })
