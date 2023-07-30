@@ -95,7 +95,7 @@
       },
       "watermelon": {
         "$type": "color",
-        "$value": "#7db8a9"
+        "$value": "#000000"
       },
       "mushroom": {
         "$type": "color",

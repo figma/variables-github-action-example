@@ -1,5 +1,5 @@
 name: Test Action
-on: 
+on:
   workflow_dispatch:
     inputs:
       file_key:
@@ -17,6 +17,15 @@ jobs:
 
       - name: Set NPM version
         run: npm install -g npm@9.5.1
-        
+
       - name: Clone repo
         uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Sync variables to Figma file
+        run: npm run start
+        env:
+          FILE_KEY: ${{ github.event.inputs.file_key }}
+          ACCESS_TOKEN: ${{ secrets.GH_ACTION_VARIABLES_SYNC_FIGMA_TOKEN }}
