@@ -68,7 +68,7 @@ function traverseCollection({
     tokens[key] = object
   } else {
     Object.entries<TokenOrTokenGroup>(object).forEach(([key2, object2]) => {
-      if (key2.charAt(0) !== '$') {
+      if (key2.charAt(0) !== '$' && typeof object2 === 'object') {
         traverseCollection({
           key: `${key}/${key2}`,
           object: object2,
