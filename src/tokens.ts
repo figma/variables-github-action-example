@@ -113,6 +113,8 @@ function variableResolvedTypeFromToken(token: Token) {
       return 'STRING'
     case 'boolean':
       return 'BOOLEAN'
+    default:
+      throw new Error(`Invalid token $type: ${token.$type}`)
   }
 }
 
@@ -179,7 +181,7 @@ function compareVariableValues(a: VariableValue, b: VariableValue) {
   return false
 }
 
-export async function generatePostVariablesPayload(
+export function generatePostVariablesPayload(
   tokensByFile: {
     [fileName: string]: {
       [tokenName: string]: Token

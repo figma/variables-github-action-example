@@ -22,7 +22,7 @@ async function main() {
   const api = new FigmaApi(process.env.ACCESS_TOKEN)
   const localVariables = await api.getLocalVariables(fileKey)
 
-  const postVariablesPayload = await generatePostVariablesPayload(tokensByFile, localVariables)
+  const postVariablesPayload = generatePostVariablesPayload(tokensByFile, localVariables)
 
   if (Object.values(postVariablesPayload).every((value) => value.length === 0)) {
     console.log(green('✅ Tokens are already up to date with the Figma file'))

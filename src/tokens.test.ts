@@ -1,8 +1,6 @@
 import { ApiGetLocalVariablesResponse } from './figma_api.js'
 import { Token, generatePostVariablesPayload, readJsonFiles } from './tokens.js'
 
-jest.mock('./figma_api.js')
-
 jest.mock('fs', () => {
   const MOCK_FILE_INFO: { [fileName: string]: string } = {
     'tokens/collection1.mode1.json': JSON.stringify({
@@ -80,8 +78,6 @@ describe('readJsonFiles', () => {
 })
 
 describe('generatePostVariablesPayload', () => {
-  beforeEach(() => {})
-
   it('does an initial sync', async () => {
     const localVariablesResponse = {
       status: 200,
@@ -119,7 +115,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = await generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
     expect(result.variableCollections).toEqual([
       {
         action: 'CREATE',
@@ -356,7 +352,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = await generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
     expect(result.variableCollections).toEqual([
       {
         action: 'CREATE',
@@ -452,5 +448,26 @@ describe('generatePostVariablesPayload', () => {
         value: { type: 'VARIABLE_ALIAS', id: 'VariableID:2:4' },
       },
     ])
+  })
+
+  it('does an initial sync', async () => {
+    const localVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {},
+        variables: {},
+      },
+    }
+
+    const tokensByFile: any = {
+      'primitives.mode1.json': {
+        'font-weight-default': { $type: 'fontWeight', $value: 400 },
+      },
+    }
+
+    expect(() => {
+      generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    }).toThrowError('Invalid token $type: fontWeight')
   })
 })
