@@ -108,11 +108,15 @@ function variableValueFromToken(
   },
 ): VariableValue {
   if (typeof token.$value === 'string' && isAlias(token.$value)) {
+    // Assume aliases are in the format {group.subgroup.token} with any number of optional groups/subgroups
+    // The Figma syntax for variable names is: group/subgroup/token
     const value = token.$value
       .trim()
       .replace(/\./g, '/')
       .replace(/[\{\}]/g, '')
 
+    // When mapping aliases to existing local variables, we assume that variable names
+    // are unique *across all collections* in the Figma file
     for (const localVariablesByName of Object.values(localVariablesByCollectionAndName)) {
       if (localVariablesByName[value]) {
         return {
@@ -122,12 +126,17 @@ function variableValueFromToken(
       }
     }
 
+    // If we don't find a local variable matching the alias, we assume it's a variable
+    // that we're going to create elsewhere in the payload.
+    // If the file has an invalid alias, we rely on the Figma API to return a 400 error
     return {
       type: 'VARIABLE_ALIAS',
       id: value,
     }
   } else if (typeof token.$value === 'string' && token.$type === 'color') {
     const color = parseColor(token.$value)
+    // TODO: remove the rounding once we fix the POST variables bug where it can't handle
+    // color values with more than 16 decimal places
     color.r = Math.round(color.r * 100000) / 100000
     color.g = Math.round(color.g * 100000) / 100000
     color.b = Math.round(color.b * 100000) / 100000
@@ -210,8 +219,10 @@ export async function generatePostVariablesPayload(
     const { collectionName, modeName } = collectionAndModeFromFileName(path.basename(fileName))
 
     const variableCollection = localVariableCollectionsByName[collectionName]
+    // Use the actual variable collection id or use the name as the temporary id
     const variableCollectionId = variableCollection ? variableCollection.id : collectionName
     const variableMode = variableCollection?.modes.find((mode) => mode.name === modeName)
+    // Use the actual mode id or use the name as the temporary id
     const modeId = variableMode ? variableMode.modeId : modeName
 
     if (
@@ -222,9 +233,10 @@ export async function generatePostVariablesPayload(
         action: 'CREATE',
         id: variableCollectionId,
         name: variableCollectionId,
-        initialModeId: modeId,
+        initialModeId: modeId, // Use the initial mode as the first mode
       })
 
+      // Rename the initial mode, since we're using it as our first mode in the collection
       postVariablesPayload.variableModes!.push({
         action: 'UPDATE',
         id: modeId,
@@ -233,6 +245,8 @@ export async function generatePostVariablesPayload(
       })
     }
 
+    // Add a new mode if it doesn't exist in the Figma file
+    // and it's not the initial mode in the collection
     if (
       !variableMode &&
       !postVariablesPayload.variableCollections!.find(
@@ -253,6 +267,8 @@ export async function generatePostVariablesPayload(
       const variable = localVariablesByName[tokenName]
       const variableId = variable ? variable.id : tokenName
 
+      // Add a new variable if it doesn't exist in the Figma file,
+      // and we haven't added it already in another mode
       if (
         !variable &&
         !postVariablesPayload.variables!.find(
@@ -271,6 +287,7 @@ export async function generatePostVariablesPayload(
       const existingVariableValue = variable && variableMode ? variable.valuesByMode[modeId] : null
       const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
 
+      // Only include the variable mode value in the payload if it's different from the existing value
       if (
         existingVariableValue === null ||
         !compareVariableValues(existingVariableValue, newVariableValue)
