@@ -32,10 +32,22 @@ export function readJsonFiles(files: string[]) {
     }
   } = {}
 
+  const seenCollectionsAndModes = new Set<string>()
+
   files.forEach((file) => {
+    const baseFileName = path.basename(file)
+    const { collectionName, modeName } = collectionAndModeFromFileName(baseFileName)
+
+    if (seenCollectionsAndModes.has(`${collectionName}.${modeName}`)) {
+      throw new Error(`Duplicate collection and mode in file: ${file}`)
+    }
+
+    seenCollectionsAndModes.add(`${collectionName}.${modeName}`)
+
     const fileContent = fs.readFileSync(file, { encoding: 'utf-8' })
     const tokensFile: TokensFile = JSON.parse(fileContent)
-    tokensJsonByFile[file] = flattenTokensFile(tokensFile)
+
+    tokensJsonByFile[baseFileName] = flattenTokensFile(tokensFile)
   })
 
   return tokensJsonByFile
@@ -81,7 +93,13 @@ function traverseCollection({
 }
 
 function collectionAndModeFromFileName(fileName: string) {
-  const [collectionName, modeName] = fileName.split('.')
+  const fileNameParts = fileName.split('.')
+  if (fileNameParts.length < 3) {
+    throw new Error(
+      `Invalid tokens file name: ${fileName}. File names must be in the format: {collectionName}.{modeName}.json`,
+    )
+  }
+  const [collectionName, modeName] = fileNameParts
   return { collectionName, modeName }
 }
 
@@ -213,7 +231,7 @@ export async function generatePostVariablesPayload(
   }
 
   Object.entries(tokensByFile).forEach(([fileName, tokens]) => {
-    const { collectionName, modeName } = collectionAndModeFromFileName(path.basename(fileName))
+    const { collectionName, modeName } = collectionAndModeFromFileName(fileName)
 
     const variableCollection = localVariableCollectionsByName[collectionName]
     // Use the actual variable collection id or use the name as the temporary id

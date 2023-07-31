@@ -5,7 +5,7 @@ jest.mock('./figma_api.js')
 
 jest.mock('fs', () => {
   const MOCK_FILE_INFO: { [fileName: string]: string } = {
-    'valid_file1.json': JSON.stringify({
+    'tokens/collection1.mode1.json': JSON.stringify({
       spacing: {
         '1': {
           $type: 'number',
@@ -17,7 +17,7 @@ jest.mock('fs', () => {
         },
       },
     }),
-    'valid_file2.json': JSON.stringify({
+    'tokens/collection2.mode1.json': JSON.stringify({
       color: {
         brand: {
           radish: {
@@ -31,11 +31,11 @@ jest.mock('fs', () => {
         },
       },
     }),
-    'valid_file3.json': JSON.stringify({
+    'tokens/collection3.mode1.json': JSON.stringify({
       token1: { $type: 'string', $value: 'value1' },
       token2: { $type: 'string', $value: 'value2' },
     }),
-    'no_tokens.json': JSON.stringify({
+    'no_tokens.mode1.json': JSON.stringify({
       foo: 'bar',
     }),
   }
@@ -50,25 +50,23 @@ jest.mock('fs', () => {
   }
 })
 
-jest.mock('axios', () => {
-  return {
-    request: jest.fn(),
-  }
-})
-
 describe('readJsonFiles', () => {
   it('reads all files and flattens tokens inside', () => {
-    const result = readJsonFiles(['valid_file1.json', 'valid_file2.json', 'valid_file3.json'])
+    const result = readJsonFiles([
+      'tokens/collection1.mode1.json',
+      'tokens/collection2.mode1.json',
+      'tokens/collection3.mode1.json',
+    ])
     expect(result).toEqual({
-      'valid_file1.json': {
+      'collection1.mode1.json': {
         'spacing/1': { $type: 'number', $value: 8 },
         'spacing/2': { $type: 'number', $value: 16 },
       },
-      'valid_file2.json': {
+      'collection2.mode1.json': {
         'color/brand/radish': { $type: 'color', $value: '#ffbe16' },
         'color/brand/pear': { $type: 'color', $value: '#ffbe16' },
       },
-      'valid_file3.json': {
+      'collection3.mode1.json': {
         token1: { $type: 'string', $value: 'value1' },
         token2: { $type: 'string', $value: 'value2' },
       },
@@ -76,8 +74,8 @@ describe('readJsonFiles', () => {
   })
 
   it('handles files that do not have any tokens', () => {
-    const result = readJsonFiles(['no_tokens.json'])
-    expect(result).toEqual({ 'no_tokens.json': {} })
+    const result = readJsonFiles(['no_tokens.mode1.json'])
+    expect(result).toEqual({ 'no_tokens.mode1.json': {} })
   })
 })
 
