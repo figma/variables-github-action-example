@@ -1,5 +1,5 @@
+import { ApiGetLocalVariablesResponse } from './figma_api.js'
 import { Token, generatePostVariablesPayload, readJsonFiles } from './tokens.js'
-import FigmaApi, { ApiGetLocalVariablesResponse } from './figma_api.js'
 
 jest.mock('./figma_api.js')
 
@@ -85,20 +85,14 @@ describe('generatePostVariablesPayload', () => {
   beforeEach(() => {})
 
   it('does an initial sync', async () => {
-    ;(FigmaApi as any).mockImplementation(() => {
-      return {
-        getLocalVariables: async (_: string) => {
-          return {
-            status: 200,
-            error: false,
-            meta: {
-              variableCollections: {},
-              variables: {},
-            },
-          }
-        },
-      }
-    })
+    const localVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {},
+        variables: {},
+      },
+    }
 
     const tokensByFile: {
       [fileName: string]: {
@@ -127,7 +121,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = await generatePostVariablesPayload(tokensByFile, 'access_token', 'file_key')
+    const result = await generatePostVariablesPayload(tokensByFile, localVariablesResponse)
     expect(result.variableCollections).toEqual([
       {
         action: 'CREATE',
@@ -274,74 +268,68 @@ describe('generatePostVariablesPayload', () => {
   })
 
   it('does an in-place update', async () => {
-    ;(FigmaApi as any).mockImplementation(() => {
-      return {
-        getLocalVariables: async (_: string): Promise<ApiGetLocalVariablesResponse> => {
-          return {
-            status: 200,
-            error: false,
-            meta: {
-              variableCollections: {
-                'VariableCollectionId:1:1': {
-                  id: 'VariableCollectionId:1:1',
-                  name: 'primitives',
-                  modes: [{ modeId: '1:0', name: 'mode1' }],
-                  defaultModeId: '1:0',
-                  remote: false,
-                },
-              },
-              variables: {
-                'VariableID:2:1': {
-                  id: 'VariableID:2:1',
-                  name: 'spacing/1',
-                  key: 'variable_key',
-                  variableCollectionId: 'VariableCollectionId:1:1',
-                  resolvedType: 'FLOAT',
-                  valuesByMode: {
-                    '1:0': 8,
-                  },
-                  remote: false,
-                },
-                'VariableID:2:2': {
-                  id: 'VariableID:2:2',
-                  name: 'spacing/2',
-                  key: 'variable_key2',
-                  variableCollectionId: 'VariableCollectionId:1:1',
-                  resolvedType: 'FLOAT',
-                  valuesByMode: {
-                    '1:0': 15, // Different from token value
-                  },
-                  remote: false,
-                },
-                'VariableID:2:3': {
-                  id: 'VariableID:2:3',
-                  name: 'color/brand/radish',
-                  key: 'variable_key3',
-                  variableCollectionId: 'VariableCollectionId:1:1',
-                  resolvedType: 'COLOR',
-                  valuesByMode: {
-                    '1:0': { r: 1, g: 0.7450980392156863, b: 0.08627450980392157, a: 1 },
-                  },
-                  remote: false,
-                },
-                'VariableID:2:4': {
-                  id: 'VariableID:2:4',
-                  name: 'color/brand/pear',
-                  key: 'variable_key4',
-                  variableCollectionId: 'VariableCollectionId:1:1',
-                  resolvedType: 'COLOR',
-                  valuesByMode: {
-                    // Different from token value
-                    '1:0': { r: 1, g: 0, b: 0.08627450980392157, a: 1 },
-                  },
-                  remote: false,
-                },
-              },
-            },
-          }
+    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {
+          'VariableCollectionId:1:1': {
+            id: 'VariableCollectionId:1:1',
+            name: 'primitives',
+            modes: [{ modeId: '1:0', name: 'mode1' }],
+            defaultModeId: '1:0',
+            remote: false,
+          },
         },
-      }
-    })
+        variables: {
+          'VariableID:2:1': {
+            id: 'VariableID:2:1',
+            name: 'spacing/1',
+            key: 'variable_key',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'FLOAT',
+            valuesByMode: {
+              '1:0': 8,
+            },
+            remote: false,
+          },
+          'VariableID:2:2': {
+            id: 'VariableID:2:2',
+            name: 'spacing/2',
+            key: 'variable_key2',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'FLOAT',
+            valuesByMode: {
+              '1:0': 15, // Different from token value
+            },
+            remote: false,
+          },
+          'VariableID:2:3': {
+            id: 'VariableID:2:3',
+            name: 'color/brand/radish',
+            key: 'variable_key3',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'COLOR',
+            valuesByMode: {
+              '1:0': { r: 1, g: 0.7450980392156863, b: 0.08627450980392157, a: 1 },
+            },
+            remote: false,
+          },
+          'VariableID:2:4': {
+            id: 'VariableID:2:4',
+            name: 'color/brand/pear',
+            key: 'variable_key4',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'COLOR',
+            valuesByMode: {
+              // Different from token value
+              '1:0': { r: 1, g: 0, b: 0.08627450980392157, a: 1 },
+            },
+            remote: false,
+          },
+        },
+      },
+    }
 
     const tokensByFile: {
       [fileName: string]: {
@@ -370,7 +358,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = await generatePostVariablesPayload(tokensByFile, 'access_token', 'file_key')
+    const result = await generatePostVariablesPayload(tokensByFile, localVariablesResponse)
     expect(result.variableCollections).toEqual([
       {
         action: 'CREATE',

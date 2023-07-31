@@ -1,11 +1,12 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import FigmaApi, {
+import {
   VariableCollection,
   Variable,
   ApiPostVariablesPayload,
   VariableValue,
+  ApiGetLocalVariablesResponse,
 } from './figma_api.js'
 import { colorApproximatelyEqual, parseColor } from './color.js'
 
@@ -166,12 +167,8 @@ export async function generatePostVariablesPayload(
       [tokenName: string]: Token
     }
   },
-  accessToken: string,
-  fileKey: string,
+  localVariables: ApiGetLocalVariablesResponse,
 ) {
-  const api = new FigmaApi(accessToken)
-  const localVariables = await api.getLocalVariables(fileKey)
-
   const localVariableCollectionsByName: { [name: string]: VariableCollection } = {}
   const localVariablesByCollectionAndName: {
     [variableCollectionId: string]: { [variableName: string]: Variable }
