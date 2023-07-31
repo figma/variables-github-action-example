@@ -5,7 +5,7 @@ import { Color } from './figma_api.js'
  * hex colors can result in slight differences.
  */
 export function colorApproximatelyEqual(colorA: Color, colorB: Color) {
-  const EPSILON = 0.002
+  const EPSILON = 0.003
 
   return (
     Math.abs(colorA.r - colorB.r) < EPSILON &&

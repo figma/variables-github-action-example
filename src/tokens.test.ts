@@ -226,12 +226,12 @@ describe('generatePostVariablesPayload', () => {
       {
         variableId: 'color/brand/radish',
         modeId: 'mode1',
-        value: { r: 1, g: 0.745, b: 0.086 },
+        value: { r: 1, g: 0.7451, b: 0.08627 },
       },
       {
         variableId: 'color/brand/pear',
         modeId: 'mode1',
-        value: { r: 1, g: 0.745, b: 0.086 },
+        value: { r: 1, g: 0.7451, b: 0.08627 },
       },
 
       // primitives, mode2
@@ -240,12 +240,12 @@ describe('generatePostVariablesPayload', () => {
       {
         variableId: 'color/brand/radish',
         modeId: 'mode2',
-        value: { r: 0.004, g: 0.004, b: 0.004 },
+        value: { r: 0.00392, g: 0.00392, b: 0.00392 },
       },
       {
         variableId: 'color/brand/pear',
         modeId: 'mode2',
-        value: { r: 0.004, g: 0.004, b: 0.004 },
+        value: { r: 0.00392, g: 0.00392, b: 0.00392 },
       },
 
       // tokens, mode1

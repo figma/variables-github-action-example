@@ -128,9 +128,9 @@ function variableValueFromToken(
     }
   } else if (typeof token.$value === 'string' && token.$type === 'color') {
     const color = parseColor(token.$value)
-    color.r = Math.round(color.r * 1000) / 1000
-    color.g = Math.round(color.g * 1000) / 1000
-    color.b = Math.round(color.b * 1000) / 1000
+    color.r = Math.round(color.r * 100000) / 100000
+    color.g = Math.round(color.g * 100000) / 100000
+    color.b = Math.round(color.b * 100000) / 100000
     return color
   } else {
     return token.$value
