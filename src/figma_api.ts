@@ -60,7 +60,7 @@ export interface VariableModeValue {
   value: VariableValue
 }
 
-interface ApiGetLocalVariablesResponse {
+export interface ApiGetLocalVariablesResponse {
   status: number
   error: boolean
   meta: {
