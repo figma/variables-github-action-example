@@ -450,7 +450,7 @@ describe('generatePostVariablesPayload', () => {
     ])
   })
 
-  it('does an initial sync', async () => {
+  it('throws on unsupported token types', async () => {
     const localVariablesResponse = {
       status: 200,
       error: false,
