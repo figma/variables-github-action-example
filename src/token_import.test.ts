@@ -1,5 +1,9 @@
 import { ApiGetLocalVariablesResponse } from './figma_api.js'
-import { Token, generatePostVariablesPayload, readJsonFiles } from './tokens.js'
+import {
+  FlattenedTokensByFile,
+  generatePostVariablesPayload,
+  readJsonFiles,
+} from './token_import.js'
 
 jest.mock('fs', () => {
   const MOCK_FILE_INFO: { [fileName: string]: string } = {
@@ -8,10 +12,12 @@ jest.mock('fs', () => {
         '1': {
           $type: 'number',
           $value: 8,
+          $description: '8px spacing',
         },
         '2': {
           $type: 'number',
           $value: 16,
+          $description: '16px spacing',
         },
       },
     }),
@@ -21,10 +27,12 @@ jest.mock('fs', () => {
           radish: {
             $type: 'color',
             $value: '#ffbe16',
+            $description: 'Radish color',
           },
           pear: {
             $type: 'color',
             $value: '#ffbe16',
+            $description: 'Pear color',
           },
         },
       },
@@ -57,12 +65,12 @@ describe('readJsonFiles', () => {
     ])
     expect(result).toEqual({
       'collection1.mode1.json': {
-        'spacing/1': { $type: 'number', $value: 8 },
-        'spacing/2': { $type: 'number', $value: 16 },
+        'spacing/1': { $type: 'number', $value: 8, $description: '8px spacing' },
+        'spacing/2': { $type: 'number', $value: 16, $description: '16px spacing' },
       },
       'collection2.mode1.json': {
-        'color/brand/radish': { $type: 'color', $value: '#ffbe16' },
-        'color/brand/pear': { $type: 'color', $value: '#ffbe16' },
+        'color/brand/radish': { $type: 'color', $value: '#ffbe16', $description: 'Radish color' },
+        'color/brand/pear': { $type: 'color', $value: '#ffbe16', $description: 'Pear color' },
       },
       'collection3.mode1.json': {
         token1: { $type: 'string', $value: 'value1' },
@@ -88,15 +96,11 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const tokensByFile: {
-      [fileName: string]: {
-        [tokenName: string]: Token
-      }
-    } = {
+    const tokensByFile: FlattenedTokensByFile = {
       'primitives.mode1.json': {
-        'spacing/1': { $type: 'number', $value: 8 },
+        'spacing/1': { $type: 'number', $value: 8, $description: '8px spacing' },
         'spacing/2': { $type: 'number', $value: 16 },
-        'color/brand/radish': { $type: 'color', $value: '#ffbe16' },
+        'color/brand/radish': { $type: 'color', $value: '#ffbe16', $description: 'Radish color' },
         'color/brand/pear': { $type: 'color', $value: '#ffbe16' },
       },
       'primitives.mode2.json': {
@@ -166,6 +170,7 @@ describe('generatePostVariablesPayload', () => {
         name: 'spacing/1',
         variableCollectionId: 'primitives',
         resolvedType: 'FLOAT',
+        description: '8px spacing',
       },
       {
         action: 'CREATE',
@@ -180,6 +185,7 @@ describe('generatePostVariablesPayload', () => {
         name: 'color/brand/radish',
         variableCollectionId: 'primitives',
         resolvedType: 'COLOR',
+        description: 'Radish color',
       },
       {
         action: 'CREATE',
@@ -273,6 +279,7 @@ describe('generatePostVariablesPayload', () => {
             modes: [{ modeId: '1:0', name: 'mode1' }],
             defaultModeId: '1:0',
             remote: false,
+            hiddenFromPublishing: false,
           },
         },
         variables: {
@@ -286,6 +293,10 @@ describe('generatePostVariablesPayload', () => {
               '1:0': 8,
             },
             remote: false,
+            description: '8px spacing',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: { WEB: 'web', ANDROID: 'android' },
           },
           'VariableID:2:2': {
             id: 'VariableID:2:2',
@@ -297,6 +308,10 @@ describe('generatePostVariablesPayload', () => {
               '1:0': 15, // Different from token value
             },
             remote: false,
+            description: 'Another spacing',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: { WEB: 'web', ANDROID: 'android' },
           },
           'VariableID:2:3': {
             id: 'VariableID:2:3',
@@ -308,6 +323,10 @@ describe('generatePostVariablesPayload', () => {
               '1:0': { r: 1, g: 0.7450980392156863, b: 0.08627450980392157, a: 1 },
             },
             remote: false,
+            description: 'Radish color',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
           },
           'VariableID:2:4': {
             id: 'VariableID:2:4',
@@ -320,19 +339,41 @@ describe('generatePostVariablesPayload', () => {
               '1:0': { r: 1, g: 0, b: 0.08627450980392157, a: 1 },
             },
             remote: false,
+            description: 'Pear color',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
           },
         },
       },
     }
 
-    const tokensByFile: {
-      [fileName: string]: {
-        [tokenName: string]: Token
-      }
-    } = {
+    const tokensByFile: FlattenedTokensByFile = {
       'primitives.mode1.json': {
-        'spacing/1': { $type: 'number', $value: 8 },
-        'spacing/2': { $type: 'number', $value: 16 },
+        'spacing/1': {
+          $type: 'number',
+          $value: 8,
+          $description: '8px spacing',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: { WEB: 'web', ANDROID: 'android' },
+            },
+          },
+        },
+        'spacing/2': {
+          $type: 'number',
+          $value: 16,
+          $description: 'changed description',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: true,
+              scopes: ['TEXT_CONTENT'],
+              codeSyntax: { WEB: 'web', ANDROID: 'android_new' },
+            },
+          },
+        },
         'color/brand/radish': { $type: 'color', $value: '#ffbe16' },
         'color/brand/pear': { $type: 'color', $value: '#ffbe16' },
       },
@@ -384,7 +425,15 @@ describe('generatePostVariablesPayload', () => {
     ])
 
     expect(result.variables).toEqual([
-      // variables for the tokens collection
+      {
+        action: 'UPDATE',
+        id: 'VariableID:2:2',
+        description: 'changed description',
+        hiddenFromPublishing: true,
+        scopes: ['TEXT_CONTENT'],
+        codeSyntax: { WEB: 'web', ANDROID: 'android_new' },
+      },
+      // new variables for the tokens collection
       {
         action: 'CREATE',
         id: 'spacing/spacing-sm',

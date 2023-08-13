@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "target": "es5",
+    "target": "es2015",
     "sourceMap": true,
     "moduleResolution": "node16",
     "forceConsistentCasingInFileNames": true,

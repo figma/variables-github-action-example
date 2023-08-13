@@ -16,7 +16,11 @@ ACCESS_TOKEN="your_personal_access_token"
 and then running:
 
 ```sh
-npm run start
+npm run sync-tokens-to-figma
+
+# or
+
+npm run sync-figma-to-tokens
 ```
 
 ## Testing

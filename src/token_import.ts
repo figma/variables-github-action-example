@@ -7,30 +7,21 @@ import {
   ApiPostVariablesPayload,
   VariableValue,
   ApiGetLocalVariablesResponse,
+  VariableChange,
+  VariableCodeSyntax,
 } from './figma_api.js'
 import { colorApproximatelyEqual, parseColor } from './color.js'
+import { areSetsEqual } from './utils.js'
+import { Token, TokenOrTokenGroup, TokensFile } from './token_types.js'
 
-export interface Token {
-  $type: 'color' | 'number' | 'string' | 'boolean'
-  $value: string | number | boolean
-}
-
-export type TokenOrTokenGroup =
-  | Token
-  | ({
-      [tokenName: string]: Token
-    } & { $type?: never; $value?: never })
-
-export type TokensFile = {
-  [key: string]: TokenOrTokenGroup
+export type FlattenedTokensByFile = {
+  [fileName: string]: {
+    [tokenName: string]: Token
+  }
 }
 
 export function readJsonFiles(files: string[]) {
-  const tokensJsonByFile: {
-    [fileName: string]: {
-      [tokenName: string]: Token
-    }
-  } = {}
+  const tokensJsonByFile: FlattenedTokensByFile = {}
 
   const seenCollectionsAndModes = new Set<string>()
 
@@ -181,12 +172,59 @@ function compareVariableValues(a: VariableValue, b: VariableValue) {
   return false
 }
 
-export function generatePostVariablesPayload(
-  tokensByFile: {
-    [fileName: string]: {
-      [tokenName: string]: Token
+function isCodeSyntaxEqual(a: VariableCodeSyntax, b: VariableCodeSyntax) {
+  return (
+    Object.keys(a).length === Object.keys(b).length &&
+    Object.keys(a).every(
+      (key) => a[key as keyof VariableCodeSyntax] === b[key as keyof VariableCodeSyntax],
+    )
+  )
+}
+
+/**
+ * Get writable token properties that are different from the variable.
+ * If the variable does not exist, all writable properties are returned.
+ */
+function tokenAndVariableDifferences(token: Token, variable: Variable | null) {
+  const differences: Partial<VariableChange> = {}
+
+  if (
+    token.$description !== undefined &&
+    (!variable || token.$description !== variable.description)
+  ) {
+    differences.description = token.$description
+  }
+
+  if (token.$extensions && token.$extensions['com.figma']) {
+    const figmaExtensions = token.$extensions['com.figma']
+
+    if (
+      figmaExtensions.hiddenFromPublishing !== undefined &&
+      (!variable || figmaExtensions.hiddenFromPublishing !== variable.hiddenFromPublishing)
+    ) {
+      differences.hiddenFromPublishing = figmaExtensions.hiddenFromPublishing
     }
-  },
+
+    if (
+      figmaExtensions.scopes &&
+      (!variable || !areSetsEqual(new Set(figmaExtensions.scopes), new Set(variable.scopes)))
+    ) {
+      differences.scopes = figmaExtensions.scopes
+    }
+
+    if (
+      figmaExtensions.codeSyntax &&
+      (!variable || !isCodeSyntaxEqual(figmaExtensions.codeSyntax, variable.codeSyntax))
+    ) {
+      differences.codeSyntax = figmaExtensions.codeSyntax
+    }
+  }
+
+  return differences
+}
+
+export function generatePostVariablesPayload(
+  tokensByFile: FlattenedTokensByFile,
   localVariables: ApiGetLocalVariablesResponse,
 ) {
   const localVariableCollectionsByName: { [name: string]: VariableCollection } = {}
@@ -283,21 +321,27 @@ export function generatePostVariablesPayload(
     Object.entries(tokens).forEach(([tokenName, token]) => {
       const variable = localVariablesByName[tokenName]
       const variableId = variable ? variable.id : tokenName
+      const variableInPayload = postVariablesPayload.variables!.find(
+        (v) => v.id === variableId && v.variableCollectionId === variableCollectionId,
+      )
+      const differences = tokenAndVariableDifferences(token, variable)
 
       // Add a new variable if it doesn't exist in the Figma file,
       // and we haven't added it already in another mode
-      if (
-        !variable &&
-        !postVariablesPayload.variables!.find(
-          (v) => v.id === variableId && v.variableCollectionId === variableCollectionId,
-        )
-      ) {
+      if (!variable && !variableInPayload) {
         postVariablesPayload.variables!.push({
           action: 'CREATE',
           id: variableId,
           name: tokenName,
           variableCollectionId,
           resolvedType: variableResolvedTypeFromToken(token),
+          ...differences,
+        })
+      } else if (variable && Object.keys(differences).length > 0) {
+        postVariablesPayload.variables!.push({
+          action: 'UPDATE',
+          id: variableId,
+          ...differences,
         })
       }
 
