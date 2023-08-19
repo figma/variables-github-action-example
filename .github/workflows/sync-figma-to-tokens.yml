@@ -9,6 +9,9 @@ on:
 jobs:
   sync-figma-to-tokens:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Install Node.js
         uses: actions/setup-node@v3
