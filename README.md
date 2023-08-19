@@ -6,17 +6,21 @@ The example tokens json files in `tokens/` are taken from the [Get started with 
 
 ## Local development
 
-You can run the GitHub action locally by first creating a `.env` file:
+You can run the GitHub actions locally by first creating a `.env` file:
 
 ```
 FILE_KEY="your_file_key"
-ACCESS_TOKEN="your_personal_access_token"
+PERSONAL_ACCESS_TOKEN="your_personal_access_token"
 ```
 
 and then running:
 
 ```sh
-npm run start
+npm run sync-tokens-to-figma
+
+# or
+
+npm run sync-figma-to-tokens
 ```
 
 ## Testing

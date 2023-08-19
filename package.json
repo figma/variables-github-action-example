@@ -2,7 +2,8 @@
   "name": "variables-github-action-example",
   "type": "module",
   "scripts": {
-    "start": "ts-node-esm -P tsconfig.json src/index.ts",
+    "sync-tokens-to-figma": "ts-node-esm -P tsconfig.json src/sync_tokens_to_figma.ts",
+    "sync-figma-to-tokens": "ts-node-esm -P tsconfig.json src/sync_figma_to_tokens.ts",
     "test": "jest"
   },
   "dependencies": {
