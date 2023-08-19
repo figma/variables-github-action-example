@@ -1,0 +1,39 @@
+name: Sync Figma variables to tokens
+on:
+  workflow_dispatch:
+    inputs:
+      file_key:
+        description: 'The file key of the Figma file to be updated'
+        required: true
+
+jobs:
+  sync-figma-to-tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.0'
+
+      - name: Set NPM version
+        run: npm install -g npm@9.5.1
+
+      - name: Clone repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Sync variables in Figma file to tokens
+        run: npm run sync-figma-to-tokens -- --output
+        env:
+          FILE_KEY: ${{ github.event.inputs.file_key }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_ACTION_VARIABLES_SYNC_FIGMA_TOKEN }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: Update tokens from Figma
+          title: Update tokens from Figma
+          body: 'Update tokens from Figma from file: https://www.figma.com/file/${{ github.event.inputs.file_key }}'
+          branch: update-tokens
