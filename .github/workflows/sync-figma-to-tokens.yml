@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Sync variables in Figma file to tokens
-        run: npm run sync-figma-to-tokens -- --output
+        run: npm run sync-figma-to-tokens -- --output tokens
         env:
           FILE_KEY: ${{ github.event.inputs.file_key }}
           PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_ACTION_VARIABLES_SYNC_FIGMA_TOKEN }}
