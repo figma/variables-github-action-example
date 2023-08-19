@@ -10,7 +10,7 @@ You can run the GitHub action locally by first creating a `.env` file:
 
 ```
 FILE_KEY="your_file_key"
-ACCESS_TOKEN="your_personal_access_token"
+PERSONAL_ACCESS_TOKEN="your_personal_access_token"
 ```
 
 and then running:

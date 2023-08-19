@@ -7,12 +7,12 @@ import { green } from './utils.js'
 import { tokenFilesFromLocalVariables } from './token_export.js'
 
 async function main() {
-  if (!process.env.ACCESS_TOKEN || !process.env.FILE_KEY) {
-    throw new Error('ACCESS_TOKEN and FILE_KEY environemnt variables are required')
+  if (!process.env.PERSONAL_ACCESS_TOKEN || !process.env.FILE_KEY) {
+    throw new Error('PERSONAL_ACCESS_TOKEN and FILE_KEY environemnt variables are required')
   }
   const fileKey = process.env.FILE_KEY
 
-  const api = new FigmaApi(process.env.ACCESS_TOKEN)
+  const api = new FigmaApi(process.env.PERSONAL_ACCESS_TOKEN)
   const localVariables = await api.getLocalVariables(fileKey)
 
   const tokensFiles = tokenFilesFromLocalVariables(localVariables)

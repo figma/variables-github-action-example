@@ -7,8 +7,8 @@ import { green } from './utils.js'
 import { generatePostVariablesPayload, readJsonFiles } from './token_import.js'
 
 async function main() {
-  if (!process.env.ACCESS_TOKEN || !process.env.FILE_KEY) {
-    throw new Error('ACCESS_TOKEN and FILE_KEY environemnt variables are required')
+  if (!process.env.PERSONAL_ACCESS_TOKEN || !process.env.FILE_KEY) {
+    throw new Error('PERSONAL_ACCESS_TOKEN and FILE_KEY environemnt variables are required')
   }
   const fileKey = process.env.FILE_KEY
 
@@ -19,7 +19,7 @@ async function main() {
 
   console.log('Read tokens files:', Object.keys(tokensByFile))
 
-  const api = new FigmaApi(process.env.ACCESS_TOKEN)
+  const api = new FigmaApi(process.env.PERSONAL_ACCESS_TOKEN)
   const localVariables = await api.getLocalVariables(fileKey)
 
   const postVariablesPayload = generatePostVariablesPayload(tokensByFile, localVariables)

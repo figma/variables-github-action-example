@@ -28,4 +28,4 @@ jobs:
         run: npm run sync-tokens-to-figma
         env:
           FILE_KEY: ${{ github.event.inputs.file_key }}
-          ACCESS_TOKEN: ${{ secrets.GH_ACTION_VARIABLES_SYNC_FIGMA_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_ACTION_VARIABLES_SYNC_FIGMA_TOKEN }}
