@@ -6,7 +6,7 @@ The example tokens json files in `tokens/` are taken from the [Get started with 
 
 ## Local development
 
-You can run the GitHub action locally by first creating a `.env` file:
+You can run the GitHub actions locally by first creating a `.env` file:
 
 ```
 FILE_KEY="your_file_key"
