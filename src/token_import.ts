@@ -184,9 +184,16 @@ function isCodeSyntaxEqual(a: VariableCodeSyntax, b: VariableCodeSyntax) {
 /**
  * Get writable token properties that are different from the variable.
  * If the variable does not exist, all writable properties are returned.
+ *
+ * This function is being used to decide what properties to include in the
+ * POST variables call to update variables in Figma. If a token does not have
+ * a particular property, we do not include it in the differences object to avoid
+ * touching that property in Figma.
  */
 function tokenAndVariableDifferences(token: Token, variable: Variable | null) {
-  const differences: Partial<VariableChange> = {}
+  const differences: Partial<
+    Omit<VariableChange, 'id' | 'name' | 'variableCollectionId' | 'resolvedType' | 'action'>
+  > = {}
 
   if (
     token.$description !== undefined &&
