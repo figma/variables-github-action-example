@@ -1,4 +1,18 @@
-import { rgbToHex } from './color.js'
+import { colorApproximatelyEqual, rgbToHex } from './color.js'
+
+describe('colorApproximatelyEqual', () => {
+  it('compares by hex value', () => {
+    expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0 })).toBe(true)
+    expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0, a: 1 })).toBe(true)
+    expect(
+      colorApproximatelyEqual({ r: 0, g: 0, b: 0, a: 0.5 }, { r: 0, g: 0, b: 0, a: 0.5 }),
+    ).toBe(true)
+    expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0, g: 0, b: 0, a: 0 })).toBe(false)
+
+    expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0.001, g: 0, b: 0 })).toBe(true)
+    expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0.0028, g: 0, b: 0 })).toBe(false)
+  })
+})
 
 describe('rgbToHex', () => {
   it('should convert rgb to hex', () => {
