@@ -1,4 +1,4 @@
-import { colorApproximatelyEqual, rgbToHex } from './color.js'
+import { colorApproximatelyEqual, parseColor, rgbToHex } from './color.js'
 
 describe('colorApproximatelyEqual', () => {
   it('compares by hex value', () => {
@@ -11,6 +11,27 @@ describe('colorApproximatelyEqual', () => {
 
     expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0.001, g: 0, b: 0 })).toBe(true)
     expect(colorApproximatelyEqual({ r: 0, g: 0, b: 0 }, { r: 0.0028, g: 0, b: 0 })).toBe(false)
+  })
+})
+
+describe('parseColor', () => {
+  it('parses hex values', () => {
+    expect(parseColor('#000')).toEqual({ r: 0, g: 0, b: 0 })
+    expect(parseColor('#000000')).toEqual({ r: 0, g: 0, b: 0 })
+    expect(parseColor('#fff')).toEqual({ r: 1, g: 1, b: 1 })
+    expect(parseColor('#ffffff')).toEqual({ r: 1, g: 1, b: 1 })
+    expect(parseColor('#FFF')).toEqual({ r: 1, g: 1, b: 1 })
+    expect(parseColor('#FFFFFF')).toEqual({ r: 1, g: 1, b: 1 })
+
+    expect(parseColor('#00000000')).toEqual({ r: 0, g: 0, b: 0, a: 0 })
+    expect(parseColor('#00000080')).toEqual({ r: 0, g: 0, b: 0, a: 0.5019607843137255 })
+    expect(parseColor('#000000ff')).toEqual({ r: 0, g: 0, b: 0, a: 1 })
+    expect(parseColor('#5EE0DCAB')).toEqual({
+      r: 0.3686274509803922,
+      g: 0.8784313725490196,
+      b: 0.8627450980392157,
+      a: 0.6705882352941176,
+    })
   })
 })
 
