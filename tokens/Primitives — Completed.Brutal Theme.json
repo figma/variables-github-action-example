@@ -316,7 +316,7 @@
       "watermelon": {
         "$type": "color",
         "$value": "#ffbe16",
-        "$description": "",
+        "$description": "new description!",
         "$extensions": {
           "com.figma": {
             "hiddenFromPublishing": false,
