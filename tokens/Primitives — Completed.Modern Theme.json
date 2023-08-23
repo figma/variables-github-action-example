@@ -315,8 +315,8 @@
       },
       "watermelon": {
         "$type": "color",
-        "$value": "#7db8a9",
-        "$description": "",
+        "$value": "#65d0b5",
+        "$description": "new description!",
         "$extensions": {
           "com.figma": {
             "hiddenFromPublishing": false,
