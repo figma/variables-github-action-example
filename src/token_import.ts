@@ -36,6 +36,10 @@ export function readJsonFiles(files: string[]) {
     seenCollectionsAndModes.add(`${collectionName}.${modeName}`)
 
     const fileContent = fs.readFileSync(file, { encoding: 'utf-8' })
+
+    if (!fileContent) {
+      throw new Error(`Invalid tokens file: ${file}. File is empty.`)
+    }
     const tokensFile: TokensFile = JSON.parse(fileContent)
 
     tokensJsonByFile[baseFileName] = flattenTokensFile(tokensFile)

@@ -44,14 +44,20 @@ jest.mock('fs', () => {
     'no_tokens.mode1.json': JSON.stringify({
       foo: 'bar',
     }),
+    'empty_file.mode1.json': '',
+    'file_with_$_keys.mode1.json': JSON.stringify({
+      $foo: 'bar',
+      token1: { $type: 'string', $value: 'value1' },
+    }),
   }
 
   return {
     readFileSync: (fpath: string) => {
       if (fpath in MOCK_FILE_INFO) {
         return MOCK_FILE_INFO[fpath]
+      } else {
+        return '{}'
       }
-      throw 'unexpected fpath'
     },
   }
 })
@@ -82,6 +88,37 @@ describe('readJsonFiles', () => {
   it('handles files that do not have any tokens', () => {
     const result = readJsonFiles(['no_tokens.mode1.json'])
     expect(result).toEqual({ 'no_tokens.mode1.json': {} })
+  })
+
+  it('handles duplicate collections and modes', () => {
+    expect(() => {
+      readJsonFiles([
+        'tokens/collection1.mode1.1.json',
+        'tokens/collection1.mode1.2.json',
+        'tokens/collection1.mode1.3.json',
+      ])
+    }).toThrowError('Duplicate collection and mode in file: tokens/collection1.mode1.2.json')
+  })
+
+  it('handles file names that do not match the expected format', () => {
+    expect(() => {
+      readJsonFiles(['tokens/collection1.mode1.json', 'tokens/collection2.mode1.json', 'foo.json'])
+    }).toThrowError(
+      'Invalid tokens file name: foo.json. File names must be in the format: {collectionName}.{modeName}.json',
+    )
+  })
+
+  it('ignores keys that start with $', () => {
+    const result = readJsonFiles(['file_with_$_keys.mode1.json'])
+    expect(result).toEqual({
+      'file_with_$_keys.mode1.json': { token1: { $type: 'string', $value: 'value1' } },
+    })
+  })
+
+  it('handles empty files', () => {
+    expect(() => {
+      readJsonFiles(['empty_file.mode1.json'])
+    }).toThrowError('Invalid tokens file: empty_file.mode1.json. File is empty.')
   })
 })
 
@@ -499,6 +536,189 @@ describe('generatePostVariablesPayload', () => {
     ])
   })
 
+  it('noops when everything is already in sync (with aliases)', () => {
+    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {
+          'VariableCollectionId:1:1': {
+            id: 'VariableCollectionId:1:1',
+            name: 'collection',
+            modes: [{ modeId: '1:0', name: 'mode1' }],
+            defaultModeId: '1:0',
+            remote: false,
+            hiddenFromPublishing: false,
+          },
+        },
+        variables: {
+          'VariableID:2:1': {
+            id: 'VariableID:2:1',
+            name: 'var1',
+            key: 'variable_key',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'STRING',
+            valuesByMode: {
+              '1:0': 'hello world!',
+            },
+            remote: false,
+            description: '',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+          'VariableID:2:2': {
+            id: 'VariableID:2:2',
+            name: 'var2',
+            key: 'variable_key2',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'STRING',
+            valuesByMode: {
+              '1:0': { type: 'VARIABLE_ALIAS', id: 'VariableID:2:1' },
+            },
+            remote: false,
+            description: '',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+        },
+      },
+    }
+
+    const tokensByFile: FlattenedTokensByFile = {
+      'collection.mode1.json': {
+        var1: {
+          $type: 'string',
+          $value: 'hello world!',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+        var2: {
+          $type: 'string',
+          $value: '{var1}',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+      },
+    }
+
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+
+    expect(result).toEqual({
+      variableCollections: [],
+      variableModes: [],
+      variables: [],
+      variableModeValues: [],
+    })
+  })
+
+  it('ignores remote collections and variables', () => {
+    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {
+          'VariableCollectionId:1:1': {
+            id: 'VariableCollectionId:1:1',
+            name: 'collection',
+            modes: [{ modeId: '1:0', name: 'mode1' }],
+            defaultModeId: '1:0',
+            remote: true,
+            hiddenFromPublishing: false,
+          },
+        },
+        variables: {
+          'VariableID:2:1': {
+            id: 'VariableID:2:1',
+            name: 'var1',
+            key: 'variable_key',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'STRING',
+            valuesByMode: {
+              '1:0': 'hello world!',
+            },
+            remote: true,
+            description: '',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+          'VariableID:2:2': {
+            id: 'VariableID:2:2',
+            name: 'var2',
+            key: 'variable_key2',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'STRING',
+            valuesByMode: {
+              '1:0': { type: 'VARIABLE_ALIAS', id: 'VariableID:2:1' },
+            },
+            remote: true,
+            description: '',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+        },
+      },
+    }
+
+    const tokensByFile: FlattenedTokensByFile = {
+      'collection.mode1.json': {
+        var1: {
+          $type: 'string',
+          $value: 'hello world!',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+        var2: {
+          $type: 'string',
+          $value: '{var1}',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+      },
+    }
+
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+
+    // Since all existing collections and variables are remote, result should be equivalent to an initial sync
+    expect(result).toEqual(
+      generatePostVariablesPayload(tokensByFile, {
+        status: 200,
+        error: false,
+        meta: {
+          variableCollections: {},
+          variables: {},
+        },
+      }),
+    )
+  })
+
   it('throws on unsupported token types', async () => {
     const localVariablesResponse = {
       status: 200,
@@ -518,5 +738,54 @@ describe('generatePostVariablesPayload', () => {
     expect(() => {
       generatePostVariablesPayload(tokensByFile, localVariablesResponse)
     }).toThrowError('Invalid token $type: fontWeight')
+  })
+
+  it('throws on duplicate variable collections in the Figma file', () => {
+    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {
+          'VariableCollectionId:1:1': {
+            id: 'VariableCollectionId:1:1',
+            name: 'collection',
+            modes: [{ modeId: '1:0', name: 'mode1' }],
+            defaultModeId: '1:0',
+            remote: false,
+            hiddenFromPublishing: false,
+          },
+          'VariableCollectionId:1:2': {
+            id: 'VariableCollectionId:1:2',
+            name: 'collection',
+            modes: [{ modeId: '2:0', name: 'mode1' }],
+            defaultModeId: '2:0',
+            remote: false,
+            hiddenFromPublishing: false,
+          },
+        },
+        variables: {},
+      },
+    }
+
+    const tokensByFile: FlattenedTokensByFile = {
+      'collection.mode1.json': {
+        var1: {
+          $type: 'string',
+          $value: 'hello world!',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+      },
+    }
+
+    expect(() => {
+      generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    }).toThrowError('Duplicate variable collection in file: collection')
   })
 })
