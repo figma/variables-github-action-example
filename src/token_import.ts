@@ -146,13 +146,7 @@ function variableValueFromToken(
       id: value,
     }
   } else if (typeof token.$value === 'string' && token.$type === 'color') {
-    const color = parseColor(token.$value)
-    // TODO: remove the rounding once we fix the POST variables bug where it can't handle
-    // color values with more than 16 decimal places
-    color.r = Math.round(color.r * 100000) / 100000
-    color.g = Math.round(color.g * 100000) / 100000
-    color.b = Math.round(color.b * 100000) / 100000
-    return color
+    return parseColor(token.$value)
   } else {
     return token.$value
   }
