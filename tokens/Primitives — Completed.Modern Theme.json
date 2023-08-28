@@ -2,15 +2,15 @@
   "spacing": {
     "1": {
       "$type": "number",
-      "$value": 8,
-      "$description": "",
+      "$value": 9,
+      "$description": "new description!",
       "$extensions": {
         "com.figma": {
           "hiddenFromPublishing": false,
           "scopes": [
             "ALL_SCOPES"
           ],
-          "codeSyntax": {}
+          "codeSyntax": { "WEB": "web" }
         }
       }
     },
