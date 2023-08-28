@@ -315,7 +315,7 @@
       },
       "watermelon": {
         "$type": "color",
-        "$value": "#7db8a9",
+        "$value": "#b87da0",
         "$description": "",
         "$extensions": {
           "com.figma": {
