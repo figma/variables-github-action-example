@@ -53,6 +53,7 @@ This workflow has some key behaviors to note:
 - The workflow will not remove variables or variable collections that have been removed in your tokens files.
 - When mapping aliases to existing local variables, we assume that variable names are unique _across all collections_ in the Figma file. Figma allows duplicate variable names across collections, so you should make sure that aliases don't have naming conflicts in your file.
 - For optional Figma variable properties like scopes and code syntax, the workflow will not modify these properties in Figma if the tokens json files do not contain those properties.
+- If a string variable is bound to a text node content in the same file, and the text node uses a [shared font in the organization](https://help.figma.com/hc/en-us/articles/360039956774), that variable cannot be updated and will result in a 400 response.
 
 ## Local development
 
