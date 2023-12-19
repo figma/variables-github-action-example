@@ -1,0 +1,104 @@
+{
+  "backgroundColor": {
+    "Color": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_FILLS"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "Color 2": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_FILLS"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "Color 3": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_FILLS"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "Color 4": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_FILLS"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "Color 5": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_FILLS"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "Color 6": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_FILLS"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    }
+  },
+  "borderColor": {
+    "Neutral": {
+      "$type": "color",
+      "$value": "#ffffff",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    }
+  }
+}
