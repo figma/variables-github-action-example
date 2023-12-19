@@ -1,0 +1,44 @@
+{
+  "Next Action": {
+    "$type": "string",
+    "$value": "Continue",
+    "$description": "",
+    "$extensions": {
+      "com.figma": {
+        "hiddenFromPublishing": false,
+        "scopes": [
+          "ALL_SCOPES"
+        ],
+        "codeSyntax": {}
+      }
+    }
+  },
+  "position": {
+    "$type": "number",
+    "$value": 100,
+    "$description": "",
+    "$extensions": {
+      "com.figma": {
+        "hiddenFromPublishing": false,
+        "scopes": [
+          "ALL_SCOPES"
+        ],
+        "codeSyntax": {}
+      }
+    }
+  },
+  "button show": {
+    "$type": "boolean",
+    "$value": false,
+    "$description": "",
+    "$extensions": {
+      "com.figma": {
+        "hiddenFromPublishing": false,
+        "scopes": [
+          "ALL_SCOPES"
+        ],
+        "codeSyntax": {}
+      }
+    }
+  }
+}
