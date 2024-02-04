@@ -9,7 +9,6 @@ import {
   LocalVariable,
   LocalVariableCollection,
   PostVariablesRequestBody,
-  VariableChange,
   VariableCodeSyntax,
   VariableCreate,
   VariableUpdate,
