@@ -1,4 +1,4 @@
-import { ApiGetLocalVariablesResponse } from './figma_api.js'
+import { GetLocalVariablesResponse } from '@figma/rest-api-spec'
 import {
   FlattenedTokensByFile,
   generatePostVariablesPayload,
@@ -124,7 +124,7 @@ describe('readJsonFiles', () => {
 
 describe('generatePostVariablesPayload', () => {
   it('does an initial sync', async () => {
-    const localVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -305,7 +305,7 @@ describe('generatePostVariablesPayload', () => {
   })
 
   it('does an in-place update', async () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -316,7 +316,9 @@ describe('generatePostVariablesPayload', () => {
             modes: [{ modeId: '1:0', name: 'mode1' }],
             defaultModeId: '1:0',
             remote: false,
+            key: 'variableKey',
             hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1', 'VariableID:2:2', 'VariableID:2:3', 'VariableID:2:4'],
           },
         },
         variables: {
@@ -537,7 +539,7 @@ describe('generatePostVariablesPayload', () => {
   })
 
   it('noops when everything is already in sync (with aliases)', () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -548,7 +550,9 @@ describe('generatePostVariablesPayload', () => {
             modes: [{ modeId: '1:0', name: 'mode1' }],
             defaultModeId: '1:0',
             remote: false,
+            key: 'variableKey',
             hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1', 'VariableID:2:2'],
           },
         },
         variables: {
@@ -626,7 +630,7 @@ describe('generatePostVariablesPayload', () => {
   })
 
   it('ignores remote collections and variables', () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -637,7 +641,9 @@ describe('generatePostVariablesPayload', () => {
             modes: [{ modeId: '1:0', name: 'mode1' }],
             defaultModeId: '1:0',
             remote: true,
+            key: 'variableKey',
             hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1', 'VariableID:2:2'],
           },
         },
         variables: {
@@ -720,7 +726,7 @@ describe('generatePostVariablesPayload', () => {
   })
 
   it('throws on unsupported token types', async () => {
-    const localVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -741,7 +747,7 @@ describe('generatePostVariablesPayload', () => {
   })
 
   it('throws on duplicate variable collections in the Figma file', () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -752,7 +758,9 @@ describe('generatePostVariablesPayload', () => {
             modes: [{ modeId: '1:0', name: 'mode1' }],
             defaultModeId: '1:0',
             remote: false,
+            key: 'variableCollectionKey1',
             hiddenFromPublishing: false,
+            variableIds: [],
           },
           'VariableCollectionId:1:2': {
             id: 'VariableCollectionId:1:2',
@@ -760,7 +768,9 @@ describe('generatePostVariablesPayload', () => {
             modes: [{ modeId: '2:0', name: 'mode1' }],
             defaultModeId: '2:0',
             remote: false,
+            key: 'variableCollectionKey2',
             hiddenFromPublishing: false,
+            variableIds: [],
           },
         },
         variables: {},
