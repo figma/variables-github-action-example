@@ -1,5 +1,3 @@
-import { VariableCodeSyntax, VariableScope } from './figma_api.js'
-
 /**
  * This file defines what design tokens and design token files look like in the codebase.
  *
@@ -7,6 +5,8 @@ import { VariableCodeSyntax, VariableScope } from './figma_api.js'
  * is a name/value pair (with other properties), while a variable in Figma stores multiple values,
  * one for each mode.
  */
+
+import { VariableCodeSyntax, VariableScope } from '@figma/rest-api-spec'
 
 export interface Token {
   /**

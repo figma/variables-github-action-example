@@ -1,8 +1,8 @@
+import { GetLocalVariablesResponse, LocalVariable } from '@figma/rest-api-spec'
 import { rgbToHex } from './color.js'
-import { ApiGetLocalVariablesResponse, Variable } from './figma_api.js'
 import { Token, TokensFile } from './token_types.js'
 
-function tokenTypeFromVariable(variable: Variable) {
+function tokenTypeFromVariable(variable: LocalVariable) {
   switch (variable.resolvedType) {
     case 'BOOLEAN':
       return 'boolean'
@@ -16,9 +16,9 @@ function tokenTypeFromVariable(variable: Variable) {
 }
 
 function tokenValueFromVariable(
-  variable: Variable,
+  variable: LocalVariable,
   modeId: string,
-  localVariables: { [id: string]: Variable },
+  localVariables: { [id: string]: LocalVariable },
 ) {
   const value = variable.valuesByMode[modeId]
   if (typeof value === 'object') {
@@ -35,7 +35,7 @@ function tokenValueFromVariable(
   }
 }
 
-export function tokenFilesFromLocalVariables(localVariablesResponse: ApiGetLocalVariablesResponse) {
+export function tokenFilesFromLocalVariables(localVariablesResponse: GetLocalVariablesResponse) {
   const tokenFiles: { [fileName: string]: TokensFile } = {}
   const localVariableCollections = localVariablesResponse.meta.variableCollections
   const localVariables = localVariablesResponse.meta.variables

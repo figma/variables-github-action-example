@@ -1,14 +1,14 @@
-import { Color } from './figma_api.js'
+import { RGB, RGBA } from '@figma/rest-api-spec'
 
 /**
  * Compares two colors for approximate equality since converting between Figma RGBA objects (from 0 -> 1) and
  * hex colors can result in slight differences.
  */
-export function colorApproximatelyEqual(colorA: Color, colorB: Color) {
+export function colorApproximatelyEqual(colorA: RGB | RGBA, colorB: RGB | RGBA) {
   return rgbToHex(colorA) === rgbToHex(colorB)
 }
 
-export function parseColor(color: string): Color {
+export function parseColor(color: string): RGB | RGBA {
   color = color.trim()
   const hexRegex = /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2}){0,1}$/
   const hexShorthandRegex = /^#([A-Fa-f0-9]{3})([A-Fa-f0-9]){0,1}$/
@@ -36,10 +36,8 @@ export function parseColor(color: string): Color {
   }
 }
 
-export function rgbToHex({ r, g, b, a }: Color) {
-  if (a === undefined) {
-    a = 1
-  }
+export function rgbToHex({ r, g, b, ...rest }: RGB | RGBA) {
+  const a = 'a' in rest ? rest.a : 1
 
   const toHex = (value: number) => {
     const hex = Math.round(value * 255).toString(16)

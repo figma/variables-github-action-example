@@ -1,9 +1,9 @@
-import { ApiGetLocalVariablesResponse } from './figma_api.js'
+import { GetLocalVariablesResponse } from '@figma/rest-api-spec'
 import { tokenFilesFromLocalVariables } from './token_export.js'
 
 describe('tokenFilesFromLocalVariables', () => {
   it('ignores remote variables', () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -14,7 +14,9 @@ describe('tokenFilesFromLocalVariables', () => {
             modes: [{ modeId: '1:0', name: 'mode1' }],
             defaultModeId: '1:0',
             remote: true,
+            key: 'variableKey',
             hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1'],
           },
         },
         variables: {
@@ -42,7 +44,7 @@ describe('tokenFilesFromLocalVariables', () => {
   })
 
   it('returns token files', () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -56,7 +58,9 @@ describe('tokenFilesFromLocalVariables', () => {
             ],
             defaultModeId: '1:0',
             remote: false,
+            key: 'variableKey',
             hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1', 'VariableID:2:2', 'VariableID:2:3', 'VariableID:2:4'],
           },
         },
         variables: {
@@ -246,7 +250,7 @@ describe('tokenFilesFromLocalVariables', () => {
   })
 
   it('handles aliases', () => {
-    const localVariablesResponse: ApiGetLocalVariablesResponse = {
+    const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
       meta: {
@@ -260,7 +264,9 @@ describe('tokenFilesFromLocalVariables', () => {
             ],
             defaultModeId: '1:0',
             remote: false,
+            key: 'variableKey',
             hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1', 'VariableID:2:2'],
           },
         },
         variables: {
