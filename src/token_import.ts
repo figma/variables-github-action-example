@@ -9,6 +9,7 @@ import {
   LocalVariable,
   LocalVariableCollection,
   PostVariablesRequestBody,
+  VariableAlias,
   VariableCodeSyntax,
   VariableCreate,
   VariableUpdate,
@@ -358,18 +359,24 @@ export function generatePostVariablesPayload(
       }
 
       const existingVariableValue = variable && variableMode ? variable.valuesByMode[modeId] : null
-      const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
+      const isVariableAlias = (existingVariableValue as VariableAlias)?.type === 'VARIABLE_ALIAS'
 
-      // Only include the variable mode value in the payload if it's different from the existing value
-      if (
-        existingVariableValue === null ||
-        !compareVariableValues(existingVariableValue, newVariableValue)
-      ) {
-        postVariablesPayload.variableModeValues!.push({
-          variableId,
-          modeId,
-          value: newVariableValue,
-        })
+      //  Ignore variable mode value if it is a variable alias. We can't update remote variable aliases.
+
+      if (!isVariableAlias) {
+        const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
+
+        // Only include the variable mode value in the payload if it's different from the existing value
+        if (
+          existingVariableValue === null ||
+          !compareVariableValues(existingVariableValue, newVariableValue)
+        ) {
+          postVariablesPayload.variableModeValues!.push({
+            variableId,
+            modeId,
+            value: newVariableValue,
+          })
+        }
       }
     })
   })
