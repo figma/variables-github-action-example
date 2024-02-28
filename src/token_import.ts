@@ -119,6 +119,12 @@ function isAlias(value: string) {
   return value.toString().trim().charAt(0) === '{'
 }
 
+const getFigmaVariableNameFromTokenValue = (value: string) =>
+  value
+    .trim()
+    .replace(/\./g, '/')
+    .replace(/[\{\}]/g, '')
+
 function variableValueFromToken(
   token: Token,
   localVariablesByCollectionAndName: {
@@ -128,10 +134,7 @@ function variableValueFromToken(
   if (typeof token.$value === 'string' && isAlias(token.$value)) {
     // Assume aliases are in the format {group.subgroup.token} with any number of optional groups/subgroups
     // The Figma syntax for variable names is: group/subgroup/token
-    const value = token.$value
-      .trim()
-      .replace(/\./g, '/')
-      .replace(/[\{\}]/g, '')
+    const value = getFigmaVariableNameFromTokenValue(token.$value)
 
     // When mapping aliases to existing local variables, we assume that variable names
     // are unique *across all collections* in the Figma file
@@ -358,26 +361,58 @@ export function generatePostVariablesPayload(
         })
       }
 
-      const existingVariableValue = variable && variableMode ? variable.valuesByMode[modeId] : null
-      const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
-      //  Ignore variable mode value if it is a variable alias. We can't update remote variable aliases.
-      const isVariableAlias = (newVariableValue as VariableAlias)?.type === 'VARIABLE_ALIAS'
-
-      if (!isVariableAlias) {
-        // Only include the variable mode value in the payload if it's different from the existing value
-        if (
-          existingVariableValue === null ||
-          !compareVariableValues(existingVariableValue, newVariableValue)
-        ) {
-          postVariablesPayload.variableModeValues!.push({
-            variableId,
-            modeId,
-            value: newVariableValue,
-          })
-        }
+      const valueFromToken = variableValueFromToken(token, localVariablesByCollectionAndName)
+      const isDifferent = isVariableValueFromTokenAndFigmaDifferent({
+        valueFromToken,
+        token,
+        variable,
+        variableModeId: modeId,
+      })
+      // Only include the variable mode value in the payload if it's different from the existing value
+      if (isDifferent) {
+        postVariablesPayload.variableModeValues!.push({
+          variableId,
+          modeId,
+          value: valueFromToken,
+        })
       }
     })
   })
 
   return postVariablesPayload
+}
+
+const isVariableValueFromTokenAndFigmaDifferent = ({
+  valueFromToken,
+  token,
+  variable,
+  variableModeId,
+}: {
+  valueFromToken: VariableValue
+  token: Token
+  variable: LocalVariable | null
+  variableModeId: string
+}) => {
+  const valueFromTokenId = (valueFromToken as VariableAlias).id
+  const isValueFromTokenIdReferenceToRemoteAlias = valueFromTokenId === token.$value
+
+  // 1. Check if token is alias and remote
+  if (
+    typeof token.$value === 'string' &&
+    isAlias(token.$value) &&
+    isValueFromTokenIdReferenceToRemoteAlias
+  ) {
+    // The VariableAlias.id equals the token value if it is not found in the local variables
+    // We then assume that the token id is referencing a remote variable.
+
+    const currentTokenValueAsFigmaVariable = getFigmaVariableNameFromTokenValue(token.$value)
+
+    const isDifferent = currentTokenValueAsFigmaVariable !== valueFromTokenId
+    return isDifferent
+  }
+
+  // 2. Check if variable exists and if it's different from the existing value
+  const valueFromFigma = variable ? variable.valuesByMode[variableModeId] : null
+
+  return valueFromFigma === null || !compareVariableValues(valueFromFigma, valueFromToken)
 }
