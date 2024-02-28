@@ -239,6 +239,7 @@ function tokenAndVariableDifferences(token: Token, variable: LocalVariable | nul
 export function generatePostVariablesPayload(
   tokensByFile: FlattenedTokensByFile,
   localVariables: GetLocalVariablesResponse,
+  shouldGenerateVariableModeValuesThatAreMissingInFigma: boolean,
 ) {
   const localVariableCollectionsByName: { [name: string]: LocalVariableCollection } = {}
   const localVariablesByCollectionAndName: {
@@ -361,20 +362,33 @@ export function generatePostVariablesPayload(
         })
       }
 
+      const valueFromFigma = variable ? variable.valuesByMode[modeId] : null
       const valueFromToken = variableValueFromToken(token, localVariablesByCollectionAndName)
-      const isDifferent = isVariableValueFromTokenAndFigmaDifferent({
-        valueFromToken,
-        token,
-        variable,
-        variableModeId: modeId,
-      })
-      // Only include the variable mode value in the payload if it's different from the existing value
-      if (isDifferent) {
+      const isMissingVariableModeValueInFigma = valueFromFigma === null
+
+      if (
+        isMissingVariableModeValueInFigma &&
+        shouldGenerateVariableModeValuesThatAreMissingInFigma
+      ) {
         postVariablesPayload.variableModeValues!.push({
           variableId,
           modeId,
           value: valueFromToken,
         })
+      } else {
+        const isDifferent = isVariableValueFromTokenAndFigmaDifferent({
+          valueFromToken,
+          valueFromFigma,
+          token,
+        })
+        // Only include the variable mode value in the payload if it's different from the existing value
+        if (isDifferent) {
+          postVariablesPayload.variableModeValues!.push({
+            variableId,
+            modeId,
+            value: valueFromToken,
+          })
+        }
       }
     })
   })
@@ -384,35 +398,29 @@ export function generatePostVariablesPayload(
 
 const isVariableValueFromTokenAndFigmaDifferent = ({
   valueFromToken,
+  valueFromFigma,
   token,
-  variable,
-  variableModeId,
 }: {
   valueFromToken: VariableValue
+  valueFromFigma: VariableValue | null
   token: Token
-  variable: LocalVariable | null
-  variableModeId: string
 }) => {
   const valueFromTokenId = (valueFromToken as VariableAlias).id
-  const isValueFromTokenIdReferenceToRemoteAlias = valueFromTokenId === token.$value
 
-  // 1. Check if token is alias and remote
-  if (
-    typeof token.$value === 'string' &&
-    isAlias(token.$value) &&
-    isValueFromTokenIdReferenceToRemoteAlias
-  ) {
+  if (typeof token.$value === 'string' && isAlias(token.$value)) {
+    const tokenValueAsFigmaVariable = getFigmaVariableNameFromTokenValue(token.$value)
     // The VariableAlias.id equals the token value if it is not found in the local variables
     // We then assume that the token id is referencing a remote variable.
+    const isValueFromTokenIdReferenceToRemoteAlias = valueFromTokenId === tokenValueAsFigmaVariable
 
-    const currentTokenValueAsFigmaVariable = getFigmaVariableNameFromTokenValue(token.$value)
+    if (isValueFromTokenIdReferenceToRemoteAlias) {
+      const currentTokenValueAsFigmaVariable = getFigmaVariableNameFromTokenValue(token.$value)
 
-    const isDifferent = currentTokenValueAsFigmaVariable !== valueFromTokenId
-    return isDifferent
+      const isDifferent = currentTokenValueAsFigmaVariable !== valueFromTokenId
+      return isDifferent
+    }
   }
 
-  // 2. Check if variable exists and if it's different from the existing value
-  const valueFromFigma = variable ? variable.valuesByMode[variableModeId] : null
-
+  // 2. Check if variable is different from the existing value
   return valueFromFigma === null || !compareVariableValues(valueFromFigma, valueFromToken)
 }

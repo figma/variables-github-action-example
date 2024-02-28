@@ -123,7 +123,7 @@ describe('readJsonFiles', () => {
 })
 
 describe('generatePostVariablesPayload', () => {
-  it('does an initial sync', async () => {
+  it('does an initial sync without generating variable mode values', async () => {
     const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
@@ -156,98 +156,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
-    expect(result.variableCollections).toEqual([
-      {
-        action: 'CREATE',
-        id: 'primitives',
-        name: 'primitives',
-        initialModeId: 'mode1',
-      },
-      {
-        action: 'CREATE',
-        id: 'tokens',
-        name: 'tokens',
-        initialModeId: 'mode1',
-      },
-    ])
-
-    expect(result.variableModes).toEqual([
-      {
-        action: 'UPDATE',
-        id: 'mode1',
-        name: 'mode1',
-        variableCollectionId: 'primitives',
-      },
-      {
-        action: 'CREATE',
-        id: 'mode2',
-        name: 'mode2',
-        variableCollectionId: 'primitives',
-      },
-      {
-        action: 'UPDATE',
-        id: 'mode1',
-        name: 'mode1',
-        variableCollectionId: 'tokens',
-      },
-      {
-        action: 'CREATE',
-        id: 'mode2',
-        name: 'mode2',
-        variableCollectionId: 'tokens',
-      },
-    ])
-
-    expect(result.variables).toEqual([
-      // variables for the primitives collection
-      {
-        action: 'CREATE',
-        id: 'spacing/1',
-        name: 'spacing/1',
-        variableCollectionId: 'primitives',
-        resolvedType: 'FLOAT',
-        description: '8px spacing',
-      },
-      {
-        action: 'CREATE',
-        id: 'spacing/2',
-        name: 'spacing/2',
-        variableCollectionId: 'primitives',
-        resolvedType: 'FLOAT',
-      },
-      {
-        action: 'CREATE',
-        id: 'color/brand/radish',
-        name: 'color/brand/radish',
-        variableCollectionId: 'primitives',
-        resolvedType: 'COLOR',
-        description: 'Radish color',
-      },
-      {
-        action: 'CREATE',
-        id: 'color/brand/pear',
-        name: 'color/brand/pear',
-        variableCollectionId: 'primitives',
-        resolvedType: 'COLOR',
-      },
-
-      // variables for the tokens collection
-      {
-        action: 'CREATE',
-        id: 'spacing/spacing-sm',
-        name: 'spacing/spacing-sm',
-        variableCollectionId: 'tokens',
-        resolvedType: 'FLOAT',
-      },
-      {
-        action: 'CREATE',
-        id: 'surface/surface-brand',
-        name: 'surface/surface-brand',
-        variableCollectionId: 'tokens',
-        resolvedType: 'COLOR',
-      },
-    ])
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse, false)
 
     expect(result.variableModeValues).toEqual([
       // primitives, mode1
@@ -277,32 +186,188 @@ describe('generatePostVariablesPayload', () => {
         modeId: 'mode2',
         value: { r: 0.00392156862745098, g: 0.00392156862745098, b: 0.00392156862745098 },
       },
-
-      // tokens, mode1
-      {
-        variableId: 'spacing/spacing-sm',
-        modeId: 'mode1',
-        value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
-      },
-      {
-        variableId: 'surface/surface-brand',
-        modeId: 'mode1',
-        value: { type: 'VARIABLE_ALIAS', id: 'color/brand/radish' },
-      },
-
-      // tokens, mode2
-      {
-        variableId: 'spacing/spacing-sm',
-        modeId: 'mode2',
-        value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
-      },
-      {
-        variableId: 'surface/surface-brand',
-        modeId: 'mode2',
-        value: { type: 'VARIABLE_ALIAS', id: 'color/brand/pear' },
-      },
     ])
-  })
+  }),
+    it('does an initial sync', async () => {
+      const localVariablesResponse: GetLocalVariablesResponse = {
+        status: 200,
+        error: false,
+        meta: {
+          variableCollections: {},
+          variables: {},
+        },
+      }
+
+      const tokensByFile: FlattenedTokensByFile = {
+        'primitives.mode1.json': {
+          'spacing/1': { $type: 'number', $value: 8, $description: '8px spacing' },
+          'spacing/2': { $type: 'number', $value: 16 },
+          'color/brand/radish': { $type: 'color', $value: '#ffbe16', $description: 'Radish color' },
+          'color/brand/pear': { $type: 'color', $value: '#ffbe16' },
+        },
+        'primitives.mode2.json': {
+          'spacing/1': { $type: 'number', $value: 8 },
+          'spacing/2': { $type: 'number', $value: 16 },
+          'color/brand/radish': { $type: 'color', $value: '#010101' },
+          'color/brand/pear': { $type: 'color', $value: '#010101' },
+        },
+        'tokens.mode1.json': {
+          'spacing/spacing-sm': { $type: 'number', $value: '{spacing.1}' },
+          'surface/surface-brand': { $type: 'color', $value: '{color.brand.radish}' },
+        },
+        'tokens.mode2.json': {
+          'spacing/spacing-sm': { $type: 'number', $value: '{spacing.1}' },
+          'surface/surface-brand': { $type: 'color', $value: '{color.brand.pear}' },
+        },
+      }
+
+      const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse, true)
+      expect(result.variableCollections).toEqual([
+        {
+          action: 'CREATE',
+          id: 'primitives',
+          name: 'primitives',
+          initialModeId: 'mode1',
+        },
+        {
+          action: 'CREATE',
+          id: 'tokens',
+          name: 'tokens',
+          initialModeId: 'mode1',
+        },
+      ])
+
+      expect(result.variableModes).toEqual([
+        {
+          action: 'UPDATE',
+          id: 'mode1',
+          name: 'mode1',
+          variableCollectionId: 'primitives',
+        },
+        {
+          action: 'CREATE',
+          id: 'mode2',
+          name: 'mode2',
+          variableCollectionId: 'primitives',
+        },
+        {
+          action: 'UPDATE',
+          id: 'mode1',
+          name: 'mode1',
+          variableCollectionId: 'tokens',
+        },
+        {
+          action: 'CREATE',
+          id: 'mode2',
+          name: 'mode2',
+          variableCollectionId: 'tokens',
+        },
+      ])
+
+      expect(result.variables).toEqual([
+        // variables for the primitives collection
+        {
+          action: 'CREATE',
+          id: 'spacing/1',
+          name: 'spacing/1',
+          variableCollectionId: 'primitives',
+          resolvedType: 'FLOAT',
+          description: '8px spacing',
+        },
+        {
+          action: 'CREATE',
+          id: 'spacing/2',
+          name: 'spacing/2',
+          variableCollectionId: 'primitives',
+          resolvedType: 'FLOAT',
+        },
+        {
+          action: 'CREATE',
+          id: 'color/brand/radish',
+          name: 'color/brand/radish',
+          variableCollectionId: 'primitives',
+          resolvedType: 'COLOR',
+          description: 'Radish color',
+        },
+        {
+          action: 'CREATE',
+          id: 'color/brand/pear',
+          name: 'color/brand/pear',
+          variableCollectionId: 'primitives',
+          resolvedType: 'COLOR',
+        },
+
+        // variables for the tokens collection
+        {
+          action: 'CREATE',
+          id: 'spacing/spacing-sm',
+          name: 'spacing/spacing-sm',
+          variableCollectionId: 'tokens',
+          resolvedType: 'FLOAT',
+        },
+        {
+          action: 'CREATE',
+          id: 'surface/surface-brand',
+          name: 'surface/surface-brand',
+          variableCollectionId: 'tokens',
+          resolvedType: 'COLOR',
+        },
+      ])
+
+      expect(result.variableModeValues).toEqual([
+        // primitives, mode1
+        { variableId: 'spacing/1', modeId: 'mode1', value: 8 },
+        { variableId: 'spacing/2', modeId: 'mode1', value: 16 },
+        {
+          variableId: 'color/brand/radish',
+          modeId: 'mode1',
+          value: { r: 1, g: 0.7450980392156863, b: 0.08627450980392157 },
+        },
+        {
+          variableId: 'color/brand/pear',
+          modeId: 'mode1',
+          value: { r: 1, g: 0.7450980392156863, b: 0.08627450980392157 },
+        },
+
+        // primitives, mode2
+        { variableId: 'spacing/1', modeId: 'mode2', value: 8 },
+        { variableId: 'spacing/2', modeId: 'mode2', value: 16 },
+        {
+          variableId: 'color/brand/radish',
+          modeId: 'mode2',
+          value: { r: 0.00392156862745098, g: 0.00392156862745098, b: 0.00392156862745098 },
+        },
+        {
+          variableId: 'color/brand/pear',
+          modeId: 'mode2',
+          value: { r: 0.00392156862745098, g: 0.00392156862745098, b: 0.00392156862745098 },
+        },
+
+        // tokens, mode1
+        {
+          variableId: 'spacing/spacing-sm',
+          modeId: 'mode1',
+          value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
+        },
+        {
+          variableId: 'surface/surface-brand',
+          modeId: 'mode1',
+          value: { type: 'VARIABLE_ALIAS', id: 'color/brand/radish' },
+        },
+
+        // tokens, mode2
+        {
+          variableId: 'spacing/spacing-sm',
+          modeId: 'mode2',
+          value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
+        },
+        {
+          variableId: 'surface/surface-brand',
+          modeId: 'mode2',
+          value: { type: 'VARIABLE_ALIAS', id: 'color/brand/pear' },
+        },
+      ])
+    })
 
   it('does an in-place update', async () => {
     const localVariablesResponse: GetLocalVariablesResponse = {
@@ -432,7 +497,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse, false)
     expect(result.variableCollections).toEqual([
       {
         action: 'CREATE',
@@ -619,7 +684,7 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse, true)
 
     expect(result).toEqual({
       variableCollections: [],
@@ -710,18 +775,22 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse, true)
 
     // Since all existing collections and variables are remote, result should be equivalent to an initial sync
     expect(result).toEqual(
-      generatePostVariablesPayload(tokensByFile, {
-        status: 200,
-        error: false,
-        meta: {
-          variableCollections: {},
-          variables: {},
+      generatePostVariablesPayload(
+        tokensByFile,
+        {
+          status: 200,
+          error: false,
+          meta: {
+            variableCollections: {},
+            variables: {},
+          },
         },
-      }),
+        true,
+      ),
     )
   })
 
@@ -742,7 +811,7 @@ describe('generatePostVariablesPayload', () => {
     }
 
     expect(() => {
-      generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+      generatePostVariablesPayload(tokensByFile, localVariablesResponse, true)
     }).toThrowError('Invalid token $type: fontWeight')
   })
 
@@ -795,7 +864,7 @@ describe('generatePostVariablesPayload', () => {
     }
 
     expect(() => {
-      generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+      generatePostVariablesPayload(tokensByFile, localVariablesResponse, true)
     }).toThrowError('Duplicate variable collection in file: collection')
   })
 })
