@@ -370,25 +370,32 @@ export function generatePostVariablesPayload(
         isMissingVariableModeValueInFigma &&
         shouldGenerateVariableModeValuesThatAreMissingInFigma
       ) {
-        // Include the variable mode value in the payload if it is missing and we have chosen to include missing values in the current library
+        // Include the variable mode value in the payload if it is missing in Figma and we have chosen to include missing values in the current library
         postVariablesPayload.variableModeValues!.push({
           variableId,
           modeId,
           value: valueFromToken,
         })
       } else {
-        const isDifferent = isVariableValueFromTokenAndFigmaDifferent({
+        // If the value from token is a VariableAlias and it references a remote variable, we don't want to include it in the payload
+        const isRemote = isVariableValueModeValueReferencingRemoteVariable({
           valueFromToken,
-          valueFromFigma,
           token,
         })
-        // Include the variable mode value in the payload if it's different from the existing value
-        if (isDifferent) {
-          postVariablesPayload.variableModeValues!.push({
-            variableId,
-            modeId,
-            value: valueFromToken,
-          })
+
+        if (!isRemote) {
+          // Check if variable is different from the existing value
+          const isDifferent =
+            valueFromFigma === null || !compareVariableValues(valueFromFigma, valueFromToken)
+
+          if (isDifferent) {
+            // Include the variable mode value in the payload if it's different from the existing value
+            postVariablesPayload.variableModeValues!.push({
+              variableId,
+              modeId,
+              value: valueFromToken,
+            })
+          }
         }
       }
     })
@@ -397,31 +404,20 @@ export function generatePostVariablesPayload(
   return postVariablesPayload
 }
 
-const isVariableValueFromTokenAndFigmaDifferent = ({
+const isVariableValueModeValueReferencingRemoteVariable = ({
   valueFromToken,
-  valueFromFigma,
   token,
 }: {
   valueFromToken: VariableValue
-  valueFromFigma: VariableValue | null
   token: Token
 }) => {
-  const valueFromTokenId = (valueFromToken as VariableAlias).id
-
   if (typeof token.$value === 'string' && isAlias(token.$value)) {
+    const valueFromTokenId = (valueFromToken as VariableAlias).id
     const tokenValueAsFigmaVariable = getFigmaVariableNameFromTokenValue(token.$value)
     // The VariableAlias.id equals the token value if it is not found in the local variables
     // We then assume that the token id is referencing a remote variable.
-    const isValueFromTokenIdReferenceToRemoteAlias = valueFromTokenId === tokenValueAsFigmaVariable
-
-    if (isValueFromTokenIdReferenceToRemoteAlias) {
-      const currentTokenValueAsFigmaVariable = getFigmaVariableNameFromTokenValue(token.$value)
-
-      const isDifferent = currentTokenValueAsFigmaVariable !== valueFromTokenId
-      return isDifferent
-    }
+    return valueFromTokenId === tokenValueAsFigmaVariable
   }
 
-  // 2. Check if variable is different from the existing value
-  return valueFromFigma === null || !compareVariableValues(valueFromFigma, valueFromToken)
+  return false
 }
