@@ -359,13 +359,11 @@ export function generatePostVariablesPayload(
       }
 
       const existingVariableValue = variable && variableMode ? variable.valuesByMode[modeId] : null
-      const isVariableAlias = (existingVariableValue as VariableAlias)?.type === 'VARIABLE_ALIAS'
-
+      const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
       //  Ignore variable mode value if it is a variable alias. We can't update remote variable aliases.
+      const isVariableAlias = (newVariableValue as VariableAlias)?.type === 'VARIABLE_ALIAS'
 
       if (!isVariableAlias) {
-        const newVariableValue = variableValueFromToken(token, localVariablesByCollectionAndName)
-
         // Only include the variable mode value in the payload if it's different from the existing value
         if (
           existingVariableValue === null ||
