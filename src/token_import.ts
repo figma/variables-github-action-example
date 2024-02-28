@@ -239,7 +239,7 @@ function tokenAndVariableDifferences(token: Token, variable: LocalVariable | nul
 export function generatePostVariablesPayload(
   tokensByFile: FlattenedTokensByFile,
   localVariables: GetLocalVariablesResponse,
-  shouldGenerateVariableModeValuesThatAreMissingInFigma: boolean,
+  shouldGenerateVariableModeValuesThatAreMissingInFigma: boolean = true,
 ) {
   const localVariableCollectionsByName: { [name: string]: LocalVariableCollection } = {}
   const localVariablesByCollectionAndName: {
