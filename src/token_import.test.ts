@@ -277,6 +277,30 @@ describe('generatePostVariablesPayload', () => {
         modeId: 'mode2',
         value: { r: 0.00392156862745098, g: 0.00392156862745098, b: 0.00392156862745098 },
       },
+
+      // tokens, mode1
+      {
+        variableId: 'spacing/spacing-sm',
+        modeId: 'mode1',
+        value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
+      },
+      {
+        variableId: 'surface/surface-brand',
+        modeId: 'mode1',
+        value: { type: 'VARIABLE_ALIAS', id: 'color/brand/radish' },
+      },
+
+      // tokens, mode2
+      {
+        variableId: 'spacing/spacing-sm',
+        modeId: 'mode2',
+        value: { type: 'VARIABLE_ALIAS', id: 'spacing/1' },
+      },
+      {
+        variableId: 'surface/surface-brand',
+        modeId: 'mode2',
+        value: { type: 'VARIABLE_ALIAS', id: 'color/brand/pear' },
+      },
     ])
   })
 
@@ -486,6 +510,30 @@ describe('generatePostVariablesPayload', () => {
         variableId: 'VariableID:2:4',
         modeId: 'mode2',
         value: { r: 0.00392156862745098, g: 0.00392156862745098, b: 0.00392156862745098 },
+      },
+
+      // tokens, mode1
+      {
+        variableId: 'spacing/spacing-sm',
+        modeId: 'mode1',
+        value: { type: 'VARIABLE_ALIAS', id: 'VariableID:2:1' },
+      },
+      {
+        variableId: 'surface/surface-brand',
+        modeId: 'mode1',
+        value: { type: 'VARIABLE_ALIAS', id: 'VariableID:2:3' },
+      },
+
+      // tokens, mode2
+      {
+        variableId: 'spacing/spacing-sm',
+        modeId: 'mode2',
+        value: { type: 'VARIABLE_ALIAS', id: 'VariableID:2:1' },
+      },
+      {
+        variableId: 'surface/surface-brand',
+        modeId: 'mode2',
+        value: { type: 'VARIABLE_ALIAS', id: 'VariableID:2:4' },
       },
     ])
   })
