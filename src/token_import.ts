@@ -370,6 +370,7 @@ export function generatePostVariablesPayload(
         isMissingVariableModeValueInFigma &&
         shouldGenerateVariableModeValuesThatAreMissingInFigma
       ) {
+        // Include the variable mode value in the payload if it is missing and we have chosen to include missing values in the current library
         postVariablesPayload.variableModeValues!.push({
           variableId,
           modeId,
@@ -381,7 +382,7 @@ export function generatePostVariablesPayload(
           valueFromFigma,
           token,
         })
-        // Only include the variable mode value in the payload if it's different from the existing value
+        // Include the variable mode value in the payload if it's different from the existing value
         if (isDifferent) {
           postVariablesPayload.variableModeValues!.push({
             variableId,
