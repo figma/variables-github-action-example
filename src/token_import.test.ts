@@ -629,7 +629,7 @@ describe('generatePostVariablesPayload', () => {
     })
   })
 
-  it('ignores remote collections and variables', () => {
+  it('noops if tokens happen to match remote collections and variables', () => {
     const localVariablesResponse: GetLocalVariablesResponse = {
       status: 200,
       error: false,
@@ -713,16 +713,199 @@ describe('generatePostVariablesPayload', () => {
     const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
 
     // Since all existing collections and variables are remote, result should be equivalent to an initial sync
-    expect(result).toEqual(
-      generatePostVariablesPayload(tokensByFile, {
-        status: 200,
-        error: false,
-        meta: {
-          variableCollections: {},
-          variables: {},
+    expect(result).toEqual({
+      variableCollections: [],
+      variableModes: [],
+      variables: [],
+      variableModeValues: [],
+    })
+  })
+
+  it('throws on attempted modifications to remote variables', () => {
+    const localVariablesResponse: GetLocalVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {
+          'VariableCollectionId:1:1': {
+            id: 'VariableCollectionId:1:1',
+            name: 'collection',
+            modes: [{ modeId: '1:0', name: 'mode1' }],
+            defaultModeId: '1:0',
+            remote: true,
+            key: 'variableKey',
+            hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1', 'VariableID:2:2'],
+          },
         },
-      }),
-    )
+        variables: {
+          'VariableID:2:1': {
+            id: 'VariableID:2:1',
+            name: 'var1',
+            key: 'variable_key',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'STRING',
+            valuesByMode: {
+              '1:0': 'hello world!',
+            },
+            remote: true,
+            description: '',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+          'VariableID:2:2': {
+            id: 'VariableID:2:2',
+            name: 'var2',
+            key: 'variable_key2',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'STRING',
+            valuesByMode: {
+              '1:0': { type: 'VARIABLE_ALIAS', id: 'VariableID:2:1' },
+            },
+            remote: true,
+            description: '',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+        },
+      },
+    }
+
+    const tokensByFile: FlattenedTokensByFile = {
+      'collection.mode1.json': {
+        var1: {
+          $type: 'string',
+          $value: 'hello world!',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: true, // modification
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+        var2: {
+          $type: 'string',
+          $value: '{var1}',
+          $description: '',
+          $extensions: {
+            'com.figma': {
+              hiddenFromPublishing: false,
+              scopes: ['ALL_SCOPES'],
+              codeSyntax: {},
+            },
+          },
+        },
+      },
+    }
+
+    // Since all existing collections and variables are remote, result should be equivalent to an initial sync
+    expect(() => {
+      generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+    }).toThrowError(`Cannot update remote variable "var1" in collection "collection"`)
+  })
+
+  it('updates aliases to remote variables', () => {
+    const localVariablesResponse: GetLocalVariablesResponse = {
+      status: 200,
+      error: false,
+      meta: {
+        variableCollections: {
+          'VariableCollectionId:1:1': {
+            id: 'VariableCollectionId:1:1',
+            name: 'primitives',
+            modes: [{ modeId: '1:0', name: 'mode1' }],
+            defaultModeId: '1:0',
+            remote: true,
+            key: 'variableCollectionKey1',
+            hiddenFromPublishing: false,
+            variableIds: ['VariableID:1:2', 'VariableID:1:3'],
+          },
+          'VariableCollectionId:2:1': {
+            id: 'VariableCollectionId:2:1',
+            name: 'tokens',
+            modes: [{ modeId: '2:0', name: 'mode1' }],
+            defaultModeId: '2:0',
+            remote: false,
+            key: 'variableCollectionKey2',
+            hiddenFromPublishing: false,
+            variableIds: ['VariableID:2:1'],
+          },
+        },
+        variables: {
+          // 2 color variables in the primitives collection
+          'VariableID:1:2': {
+            id: 'VariableID:1:2',
+            name: 'gray/100',
+            key: 'variableKey1',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'COLOR',
+            valuesByMode: {
+              '1:0': { r: 0.98, g: 0.98, b: 0.98, a: 1 },
+            },
+            remote: true,
+            description: 'light gray',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+          'VariableID:1:3': {
+            id: 'VariableID:1:3',
+            name: 'gray/200',
+            key: 'variableKey2',
+            variableCollectionId: 'VariableCollectionId:1:1',
+            resolvedType: 'COLOR',
+            valuesByMode: {
+              '1:0': { r: 0.96, g: 0.96, b: 0.96, a: 1 },
+            },
+            remote: true,
+            description: 'light gray',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+          // 1 color variable in the tokens collection
+          'VariableID:2:1': {
+            id: 'VariableID:2:1',
+            name: 'surface/surface-brand',
+            key: 'variableKey3',
+            variableCollectionId: 'VariableCollectionId:2:1',
+            resolvedType: 'COLOR',
+            valuesByMode: {
+              '2:0': { type: 'VARIABLE_ALIAS', id: 'VariableID:1:2' },
+            },
+            remote: false,
+            description: 'light gray',
+            hiddenFromPublishing: false,
+            scopes: ['ALL_SCOPES'],
+            codeSyntax: {},
+          },
+        },
+      },
+    }
+
+    const tokensByFile: FlattenedTokensByFile = {
+      'tokens.mode1.json': {
+        // Change the alias to point to the other variable in the primitives collection
+        'surface/surface-brand': { $type: 'color', $value: '{gray.200}' },
+      },
+    }
+
+    const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
+
+    expect(result.variableCollections).toEqual([])
+    expect(result.variableModes).toEqual([])
+    expect(result.variables).toEqual([])
+    expect(result.variableModeValues).toEqual([
+      {
+        variableId: 'VariableID:2:1',
+        modeId: '2:0',
+        value: { type: 'VARIABLE_ALIAS', id: 'VariableID:1:3' },
+      },
+    ])
   })
 
   it('throws on unsupported token types', async () => {

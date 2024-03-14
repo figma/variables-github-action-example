@@ -242,11 +242,6 @@ export function generatePostVariablesPayload(
   } = {}
 
   Object.values(localVariables.meta.variableCollections).forEach((collection) => {
-    // Skip over remote collections because we can't modify them
-    if (collection.remote) {
-      return
-    }
-
     if (localVariableCollectionsByName[collection.name]) {
       throw new Error(`Duplicate variable collection in file: ${collection.name}`)
     }
@@ -255,11 +250,6 @@ export function generatePostVariablesPayload(
   })
 
   Object.values(localVariables.meta.variables).forEach((variable) => {
-    // Skip over remote variables because we can't modify them
-    if (variable.remote) {
-      return
-    }
-
     if (!localVariablesByCollectionAndName[variable.variableCollectionId]) {
       localVariablesByCollectionAndName[variable.variableCollectionId] = {}
     }
@@ -350,6 +340,12 @@ export function generatePostVariablesPayload(
           ...differences,
         })
       } else if (variable && Object.keys(differences).length > 0) {
+        if (variable.remote) {
+          throw new Error(
+            `Cannot update remote variable "${variable.name}" in collection "${collectionName}"`,
+          )
+        }
+
         postVariablesPayload.variables!.push({
           action: 'UPDATE',
           id: variableId,
