@@ -712,7 +712,6 @@ describe('generatePostVariablesPayload', () => {
 
     const result = generatePostVariablesPayload(tokensByFile, localVariablesResponse)
 
-    // Since all existing collections and variables are remote, result should be equivalent to an initial sync
     expect(result).toEqual({
       variableCollections: [],
       variableModes: [],
@@ -802,7 +801,6 @@ describe('generatePostVariablesPayload', () => {
       },
     }
 
-    // Since all existing collections and variables are remote, result should be equivalent to an initial sync
     expect(() => {
       generatePostVariablesPayload(tokensByFile, localVariablesResponse)
     }).toThrowError(`Cannot update remote variable "var1" in collection "collection"`)
