@@ -2,7 +2,7 @@
   "surface": {
     "surface-primary": {
       "$type": "color",
-      "$value": "{color.brand.cherry}",
+      "$value": "{color.brand.watermelon}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -16,7 +16,7 @@
     },
     "surface-secodary": {
       "$type": "color",
-      "$value": "{color.brand.pear}",
+      "$value": "{color.brand.watermelon}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -30,7 +30,7 @@
     },
     "surface-invert": {
       "$type": "color",
-      "$value": "{color.brand.mushroom}",
+      "$value": "{color.brand.watermelon}",
       "$description": "",
       "$extensions": {
         "com.figma": {
