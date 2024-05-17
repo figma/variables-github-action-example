@@ -1,18 +1,4 @@
 {
-  "Amount available": {
-    "$type": "number",
-    "$value": 4,
-    "$description": "",
-    "$extensions": {
-      "com.figma": {
-        "hiddenFromPublishing": false,
-        "scopes": [
-          "ALL_SCOPES"
-        ],
-        "codeSyntax": {}
-      }
-    }
-  },
   "Is available": {
     "$type": "boolean",
     "$value": true,
@@ -27,9 +13,9 @@
       }
     }
   },
-  "Has cart": {
-    "$type": "boolean",
-    "$value": false,
+  "Cart button text": {
+    "$type": "string",
+    "$value": "Available",
     "$description": "",
     "$extensions": {
       "com.figma": {
@@ -41,9 +27,23 @@
       }
     }
   },
-  "Cart button text": {
-    "$type": "string",
-    "$value": "Available",
+  "Amount available": {
+    "$type": "number",
+    "$value": 4,
+    "$description": "",
+    "$extensions": {
+      "com.figma": {
+        "hiddenFromPublishing": false,
+        "scopes": [
+          "ALL_SCOPES"
+        ],
+        "codeSyntax": {}
+      }
+    }
+  },
+  "Has cart": {
+    "$type": "boolean",
+    "$value": false,
     "$description": "",
     "$extensions": {
       "com.figma": {
