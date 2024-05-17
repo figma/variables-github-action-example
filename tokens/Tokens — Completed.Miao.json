@@ -2,7 +2,7 @@
   "surface": {
     "surface-primary": {
       "$type": "color",
-      "$value": "{color.gray.50}",
+      "$value": "{color.brand.cherry}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -16,7 +16,7 @@
     },
     "surface-secodary": {
       "$type": "color",
-      "$value": "{color.gray.800}",
+      "$value": "{color.brand.pear}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -30,7 +30,7 @@
     },
     "surface-invert": {
       "$type": "color",
-      "$value": "{color.gray.900}",
+      "$value": "{color.brand.mushroom}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -204,7 +204,7 @@
   "text": {
     "text-primary": {
       "$type": "color",
-      "$value": "{color.gray.900}",
+      "$value": "{color.gray.50}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -218,7 +218,7 @@
     },
     "text-secondary": {
       "$type": "color",
-      "$value": "{color.gray.600}",
+      "$value": "{color.gray.200}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -246,7 +246,7 @@
     },
     "text-invert": {
       "$type": "color",
-      "$value": "{color.gray.50}",
+      "$value": "{color.gray.900}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -262,7 +262,7 @@
   "border": {
     "border-primary": {
       "$type": "color",
-      "$value": "{color.gray.900}",
+      "$value": "{color.gray.50}",
       "$description": "",
       "$extensions": {
         "com.figma": {
