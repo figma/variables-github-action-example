@@ -1514,7 +1514,7 @@
     },
     "Accent-purple": {
       "$type": "color",
-      "$value": "#000000",
+      "$value": "#b726ff",
       "$description": "",
       "$extensions": {
         "com.figma": {
