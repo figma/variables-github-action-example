@@ -611,7 +611,7 @@
           },
           "Stroke": {
             "$type": "color",
-            "$value": "{Color.White-none}",
+            "$value": "{Color.White--none}",
             "$description": "",
             "$extensions": {
               "com.figma": {
