@@ -657,7 +657,7 @@
           }
         }
       },
-      "Stoke": {
+      "Stroke": {
         "Background": {
           "$type": "color",
           "$value": "{Color.Green-200--20}",
@@ -672,7 +672,7 @@
             }
           }
         },
-        "Stoke": {
+        "Stroke": {
           "$type": "color",
           "$value": "{Color.Green-500--40}",
           "$description": "",
