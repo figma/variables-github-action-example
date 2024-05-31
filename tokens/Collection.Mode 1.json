@@ -1,0 +1,16 @@
+{
+  "Color": {
+    "$type": "color",
+    "$value": "{border.border-primary}",
+    "$description": "",
+    "$extensions": {
+      "com.figma": {
+        "hiddenFromPublishing": false,
+        "scopes": [
+          "ALL_SCOPES"
+        ],
+        "codeSyntax": {}
+      }
+    }
+  }
+}
