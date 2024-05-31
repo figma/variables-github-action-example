@@ -1,0 +1,503 @@
+{
+    "Content": {
+        "Onboarding": {
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.4}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            }
+        },
+        "Vertical Gap": {
+            "$type": "number",
+            "$value": "{Spacing.2}",
+            "$description": ""
+        },
+        "Padding Block": {
+            "$type": "number",
+            "$value": "{Spacing.3}",
+            "$description": ""
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.3}",
+            "$description": ""
+        }
+    },
+    "Header": {
+        "Padding Block": {
+            "$type": "number",
+            "$value": "{Spacing.0-5}",
+            "$description": ""
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.1}",
+            "$description": ""
+        }
+    },
+    "Footer": {
+        "Vertical Gap": {
+            "$type": "number",
+            "$value": "{Spacing.2}",
+            "$description": ""
+        },
+        "Padding Top": {
+            "$type": "number",
+            "$value": "{Spacing.2}",
+            "$description": ""
+        },
+        "Padding Bottom": {
+            "$type": "number",
+            "$value": "{Spacing.7}",
+            "$description": ""
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.3}",
+            "$description": ""
+        },
+        "Onboarding": {
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            }
+        }
+    },
+    "Button": {
+        "Corner Radius": {
+            "$type": "number",
+            "$value": "{Radius.md}",
+            "$description": ""
+        },
+        "Height": {
+            "$type": "number",
+            "$value": "{Sizes.7}",
+            "$description": ""
+        },
+        "Vertical Gap": {
+            "$type": "number",
+            "$value": "{Spacing.0}",
+            "$description": ""
+        },
+        "Horizontal Gap": {
+            "$type": "number",
+            "$value": "{Spacing.1}",
+            "$description": ""
+        },
+        "Padding Block": {
+            "$type": "number",
+            "$value": "{Spacing.2}",
+            "$description": ""
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.1}",
+            "$description": ""
+        },
+        "Tertiary": {
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.1}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.1}",
+                "$description": ""
+            }
+        },
+        "Framed": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.xxl}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Sizes.2}",
+                "$description": ""
+            },
+            "Padding Top": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            },
+            "Padding Bottom": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            }
+        }
+    },
+    "Checkbox": {
+        "Timer": {
+            "Horizontal Gap": {
+                "$type": "number",
+                "$value": "{Spacing.0-5}",
+                "$description": ""
+            },
+            "Horizontal Padding": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Vertical Padding": {
+                "$type": "number",
+                "$value": "{Spacing.0-5}",
+                "$description": ""
+            },
+            "Radius": {
+                "$type": "number",
+                "$value": "{Radius.sm}",
+                "$description": ""
+            }
+        },
+        "Base": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.md}",
+                "$description": ""
+            },
+            "Height": {
+                "$type": "number",
+                "$value": "{Sizes.8}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.0}",
+                "$description": ""
+            },
+            "Horizontal Gap": {
+                "$type": "number",
+                "$value": "{Spacing.1}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.0}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            }
+        },
+        "Radio Button": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.rounded}",
+                "$description": ""
+            }
+        },
+        "Reassuring": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.md}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.-1-5}",
+                "$description": ""
+            },
+            "Padding Top": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            },
+            "Padding Bottom": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            }
+        }
+    },
+    "Tag": {
+        "Corner Radius": {
+            "$type": "number",
+            "$value": "{Radius.rounded}",
+            "$description": ""
+        },
+        "Padding Block": {
+            "$type": "number",
+            "$value": "{Spacing.0-5}",
+            "$description": ""
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.1}",
+            "$description": ""
+        }
+    },
+    "Toggle": {
+        "Corner Radius": {
+            "$type": "number",
+            "$value": "{Radius.rounded}",
+            "$description": ""
+        },
+        "Padding Block": {
+            "$type": "number",
+            "$value": "{Spacing.0-25}",
+            "$description": ""
+        },
+        "Option": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.rounded}",
+                "$description": ""
+            },
+            "Height": {
+                "$type": "number",
+                "$value": "{Sizes.7}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.0}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.0-75}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            }
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.0-25}",
+            "$description": ""
+        }
+    },
+    "Card": {
+        "Base": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.lg}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.1}",
+                "$description": ""
+            },
+            "Horizontal Gap": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            }
+        },
+        "Progress Indicators": {
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.1}",
+                "$description": ""
+            },
+            "Horizontal Gap": {
+                "$type": "number",
+                "$value": "{Spacing.1}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Size Active": {
+                "$type": "number",
+                "$value": "{Sizes.5}",
+                "$description": ""
+            },
+            "Size Idle": {
+                "$type": "number",
+                "$value": "{Sizes.1}",
+                "$description": ""
+            }
+        }
+    },
+    "Switcher": {
+        "Plan": {
+            "Minimum Height": {
+                "$type": "number",
+                "$value": "{Sizes.7}",
+                "$description": ""
+            },
+            "Maximum Height": {
+                "$type": "number",
+                "$value": "{Sizes.8-5}",
+                "$description": ""
+            },
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.lg}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.1-5}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.2}",
+                "$description": ""
+            }
+        }
+    },
+    "Overlay": {
+        "Popup": {
+            "Corner Radius": {
+                "$type": "number",
+                "$value": "{Radius.xl}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            }
+        },
+        "Bottom Sheet": {
+            "Corner Radius Top": {
+                "$type": "number",
+                "$value": "{Radius.xl}",
+                "$description": ""
+            },
+            "Corner Radius Bottom": {
+                "$type": "number",
+                "$value": "{Radius.none}",
+                "$description": ""
+            },
+            "Vertical Gap": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            },
+            "Padding Top": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            },
+            "Padding Bottom": {
+                "$type": "number",
+                "$value": "{Spacing.5}",
+                "$description": ""
+            },
+            "Padding Inline": {
+                "$type": "number",
+                "$value": "{Spacing.3}",
+                "$description": ""
+            }
+        }
+    },
+    "Offer Badge": {
+        "Corner Radius": {
+            "$type": "number",
+            "$value": "{Radius.lg}",
+            "$description": ""
+        },
+        "Horizontal Gap": {
+            "$type": "number",
+            "$value": "{Spacing.0-5}",
+            "$description": ""
+        },
+        "Padding Block": {
+            "$type": "number",
+            "$value": "{Spacing.2}",
+            "$description": ""
+        },
+        "Padding Inline": {
+            "$type": "number",
+            "$value": "{Spacing.3}",
+            "$description": ""
+        }
+    },
+    "Timeline Reminder": {
+        "Indicator": {
+            "Icon": {
+                "Padding": {
+                    "$type": "number",
+                    "$value": "{Spacing.1}",
+                    "$description": ""
+                }
+            },
+            "Padding Block": {
+                "$type": "number",
+                "$value": "{Spacing.4}",
+                "$description": ""
+            },
+            "Line Lenght": {
+                "$type": "number",
+                "$value": "{Sizes.7}",
+                "$description": ""
+            }
+        },
+        "Horizontal Gap": {
+            "$type": "number",
+            "$value": "{Spacing.2}",
+            "$description": ""
+        },
+        "Inner Vertical Gap": {
+            "$type": "number",
+            "$value": "{Spacing.2-5}",
+            "$description": ""
+        }
+    }
+}
