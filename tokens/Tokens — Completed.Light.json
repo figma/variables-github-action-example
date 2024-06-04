@@ -1,22 +1,6 @@
 {
-  "border": {
-    "border-primary": {
-      "$type": "color",
-      "$value": "{color.gray.900}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
-    }
-  },
-  "text": {
-    "text-invert": {
+  "surface": {
+    "surface-primary": {
       "$type": "color",
       "$value": "{color.gray.50}",
       "$description": "",
@@ -30,7 +14,21 @@
         }
       }
     },
-    "text-brand": {
+    "surface-secodary": {
+      "$type": "color",
+      "$value": "{color.gray.800}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "surface-invert": {
       "$type": "color",
       "$value": "{color.gray.900}",
       "$description": "",
@@ -44,23 +42,9 @@
         }
       }
     },
-    "text-primary": {
+    "surface-brand": {
       "$type": "color",
-      "$value": "{color.gray.900}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
-    },
-    "text-secondary": {
-      "$type": "color",
-      "$value": "{color.gray.600}",
+      "$value": "{color.brand.watermelon}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -88,23 +72,9 @@
         }
       }
     },
-    "spacing-2xl": {
+    "spacing-xs": {
       "$type": "number",
-      "$value": "{spacing.13}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
-    },
-    "spacing-lg": {
-      "$type": "number",
-      "$value": "{spacing.4}",
+      "$value": "{spacing.half}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -130,9 +100,9 @@
         }
       }
     },
-    "spacing-xs": {
+    "spacing-md": {
       "$type": "number",
-      "$value": "{spacing.half}",
+      "$value": "{spacing.3}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -144,9 +114,9 @@
         }
       }
     },
-    "spacing-md": {
+    "spacing-lg": {
       "$type": "number",
-      "$value": "{spacing.3}",
+      "$value": "{spacing.4}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -171,54 +141,10 @@
           "codeSyntax": {}
         }
       }
-    }
-  },
-  "surface": {
-    "surface-secodary": {
-      "$type": "color",
-      "$value": "{color.gray.800}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
     },
-    "surface-brand": {
-      "$type": "color",
-      "$value": "{color.brand.watermelon}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
-    },
-    "surface-invert": {
-      "$type": "color",
-      "$value": "{color.gray.900}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
-    },
-    "surface-primary": {
-      "$type": "color",
-      "$value": "{color.gray.50}",
+    "spacing-2xl": {
+      "$type": "number",
+      "$value": "{spacing.13}",
       "$description": "",
       "$extensions": {
         "com.figma": {
@@ -232,20 +158,6 @@
     }
   },
   "radius": {
-    "radius-rounded": {
-      "$type": "number",
-      "$value": "{radius.md}",
-      "$description": "",
-      "$extensions": {
-        "com.figma": {
-          "hiddenFromPublishing": false,
-          "scopes": [
-            "ALL_SCOPES"
-          ],
-          "codeSyntax": {}
-        }
-      }
-    },
     "radius-minimal": {
       "$type": "number",
       "$value": "{radius.sm}",
@@ -260,9 +172,97 @@
         }
       }
     },
+    "radius-rounded": {
+      "$type": "number",
+      "$value": "{radius.md}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
     "radius-full": {
       "$type": "number",
       "$value": "{radius.3xl}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    }
+  },
+  "text": {
+    "text-primary": {
+      "$type": "color",
+      "$value": "{color.gray.900}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "text-secondary": {
+      "$type": "color",
+      "$value": "{color.gray.600}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "text-brand": {
+      "$type": "color",
+      "$value": "{color.gray.900}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    },
+    "text-invert": {
+      "$type": "color",
+      "$value": "{color.gray.50}",
+      "$description": "",
+      "$extensions": {
+        "com.figma": {
+          "hiddenFromPublishing": false,
+          "scopes": [
+            "ALL_SCOPES"
+          ],
+          "codeSyntax": {}
+        }
+      }
+    }
+  },
+  "border": {
+    "border-primary": {
+      "$type": "color",
+      "$value": "{color.gray.900}",
       "$description": "",
       "$extensions": {
         "com.figma": {
