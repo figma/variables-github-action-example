@@ -3,14 +3,14 @@
   "type": "module",
   "scripts": {
     "prettier:check": "prettier --check src/",
-    "sync-tokens-to-figma": "ts-node-esm -P tsconfig.json src/sync_tokens_to_figma.ts",
-    "sync-figma-to-tokens": "ts-node-esm -P tsconfig.json src/sync_figma_to_tokens.ts",
+    "sync-tokens-to-figma": "tsx src/sync_tokens_to_figma.ts",
+    "sync-figma-to-tokens": "tsx src/sync_figma_to_tokens.ts",
     "test": "jest"
   },
   "dependencies": {
     "axios": "^1.6.0",
     "dotenv": "^16.3.1",
-    "ts-node": "^10.9.1",
+    "tsx": "^4.16.2",
     "typescript": "^5.1.6"
   },
   "devDependencies": {
